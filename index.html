@@ -5,25 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#5b3fa8">
 <title>Study Stars</title>
-   <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyBtKXJH3HVfrxasCJN8_d5dTRgdtbjy0P4",
-    authDomain: "study-stars-cb78f.firebaseapp.com",
-    projectId: "study-stars-cb78f",
-    storageBucket: "study-stars-cb78f.firebasestorage.app",
-    messagingSenderId: "194416058619",
-    appId: "1:194416058619:web:d0acf8005ea5003c8f105e"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -128,6 +109,21 @@ td .del{min-height:36px;padding:0 12px;font-size:14px}td .del.sure{color:var(--r
 .card{background:var(--bg);border-radius:22px;padding:clamp(20px,4vw,32px);max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);animation:pop .4s ease}
 .card p{margin:10px 0 20px;font-size:17px}.card .row button{flex:1 1 200px;font-weight:600}
 .yes{background:var(--gold);border:0;color:#1d1503}.no{background:var(--red);border:0;color:#fff}
+.hdr{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.acct button{display:inline-flex;align-items:center;gap:10px}
+.me{padding:0 14px 0 5px;min-height:48px;border-radius:26px}.me span{display:grid;text-align:left;line-height:1.2}.me small{color:var(--soft);font-size:12px}
+.av{width:38px;height:38px;border-radius:50%;object-fit:cover;flex:none}
+.ini{display:grid;place-items:center;background:var(--vio);color:var(--bg);font-weight:600}
+.avL{width:96px;height:96px;border-radius:50%;object-fit:cover;font-size:38px;flex:none}
+.lvl{margin:8px 0 0;font-size:15px}
+.mh{display:flex;justify-content:space-between;align-items:center;gap:8px}.x{min-height:40px;padding:0 12px}
+.card p.small{margin:6px 0 16px;font-size:14px;color:var(--soft)}.card p.err{color:var(--red);font-size:14px;min-height:1.3em;margin:10px 0 0}
+.gbtn{width:100%;font-weight:600}.or{text-align:center;color:var(--soft);font-size:13px;margin:14px 0}
+.field{margin-bottom:12px}
+.link{border:0;background:none;color:var(--vio);padding:0 4px;min-height:40px;text-decoration:underline;font-size:14px}
+.pp{display:flex;gap:16px;align-items:center;margin:16px 0;flex-wrap:wrap}
+.filebtn{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--bg);cursor:pointer;font-weight:500;font-size:16px;margin:0}
+.filebtn:focus-within{outline:3px solid var(--vio);outline-offset:2px}.sr{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
 @media(max-width:760px){.timer,.buckets{grid-template-columns:minmax(0,1fr)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:6.5em;margin-inline-start:-7em;color:var(--soft)}.stack td:empty{display:none}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -137,7 +133,7 @@ td .del{min-height:36px;padding:0 12px;font-size:14px}td .del.sure{color:var(--r
 <body>
 <section class="band"><div class="wrap">
   <div class="top"><h1>Study Stars</h1>
-    <div class="tabs" id="tabs"><button data-m="timer">Timer</button><button data-m="check">10-min check-in</button></div></div>
+    <div class="hdr"><div class="tabs" id="tabs"><button data-m="timer">Timer</button><button data-m="check">10-min check-in</button></div><div class="acct" id="acct"></div></div></div>
   <div class="timer">
     <div class="ring" id="ring">
       <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="tr" cx="50" cy="50" r="45"/><circle id="prog" class="pr" cx="50" cy="50" r="45" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/></svg>
@@ -164,7 +160,7 @@ td .del{min-height:36px;padding:0 12px;font-size:14px}td .del.sure{color:var(--r
   <div class="buckets">
     <div class="bk"><svg id="jarG" class="jar" viewBox="0 0 160 170" role="img" aria-label="Gold star bucket"></svg>
       <div><b id="gN">0</b><span class="t">Gold stars</span> <span class="sub">· 1 star = 1 hour studied</span>
-        <div class="meter"><i id="gBar" style="width:0"></i></div><span class="sub" id="gNext"></span></div></div>
+        <div class="meter"><i id="gBar" style="width:0"></i></div><span class="sub" id="gNext"></span><p class="lvl" id="lvl"></p></div></div>
     <div class="bk"><svg id="jarR" class="jar" viewBox="0 0 160 170" role="img" aria-label="Red star bucket"></svg>
       <div><b id="rN">0</b><span class="t">Red stars</span> <span class="sub">· each “gon kalakanniyek” answer</span>
         <p class="sub" id="rLast" style="margin:8px 0 0"></p></div></div>
@@ -187,6 +183,30 @@ td .del{min-height:36px;padding:0 12px;font-size:14px}td .del.sure{color:var(--r
   <p class="sub" id="askT" style="margin:14px 0 0"></p>
 </div></div>
 
+<div class="ask" id="auth" hidden><div class="card" role="dialog" aria-labelledby="authH">
+  <div class="mh"><h2 id="authH">Sign in to Study Stars</h2><button class="x" data-close="#auth" aria-label="Close">✕</button></div>
+  <p class="small">Keep your stars in your account and use them on any laptop.</p>
+  <button class="gbtn" id="gBtn" type="button">Continue with Google</button>
+  <div class="or">or use your email</div>
+  <form id="authForm" novalidate>
+    <div class="field" id="nmRow" hidden><label for="nm">Your name</label><input id="nm" maxlength="30" autocomplete="nickname"></div>
+    <div class="field"><label for="em">Email</label><input id="em" type="email" autocomplete="email"></div>
+    <div class="field"><label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password"></div>
+    <button class="big" id="authGo" type="submit" style="width:100%">Sign in</button>
+  </form>
+  <div class="row" style="justify-content:space-between;margin-top:8px"><button class="link" id="authSw" type="button">New here? Create an account</button><button class="link" id="forgot" type="button">Forgot password?</button></div>
+  <p class="err" id="authErr" role="alert"></p>
+</div></div>
+
+<div class="ask" id="prof" hidden><div class="card" role="dialog" aria-labelledby="profH">
+  <div class="mh"><h2 id="profH">Your profile</h2><button class="x" data-close="#prof" aria-label="Close">✕</button></div>
+  <div class="pp"><div id="pPic"></div><div class="row"><label class="filebtn">Change picture<input class="sr" type="file" id="pFile" accept="image/*"></label><button id="pRm" type="button">Remove</button></div></div>
+  <div class="field"><label for="pName">Display name</label><input id="pName" maxlength="30"></div>
+  <p class="small" id="pInfo"></p>
+  <div class="row"><button class="big" id="pSave" type="button">Save</button><button id="pOut" type="button">Sign out</button></div>
+  <p class="err" id="pErr" role="alert"></p>
+</div></div>
+
 <div class="fx" id="fx" hidden><div class="bg"></div><div class="rays"></div><div id="sp"></div>
   <div class="fxc"><svg id="big" viewBox="0 0 200 200" aria-hidden="true"><defs>
     <radialGradient id="gG" cx="45%" cy="40%" r="65%"><stop offset="0" stop-color="#fffbe6"/><stop offset=".45" stop-color="#ffd447"/><stop offset="1" stop-color="#e08600"/></radialGradient>
@@ -206,13 +226,13 @@ const clock=s=>{s=Math.max(0,Math.ceil(s));const h=Math.floor(s/3600),m=Math.flo
 const fmtM=m=>{m=Math.round(m);const h=Math.floor(m/60),r=m%60;return h?h+' h '+pad(r)+' min':r+' min'};
 const starPath=(cx,cy,r)=>{let p='';for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.45:r;p+=(i?'L':'M')+(cx+rr*Math.cos(a)).toFixed(1)+' '+(cy+rr*Math.sin(a)).toFixed(1)}return p+'Z'};
 const PRE=[15,25,45,60,90],CHECK=600e3,ANSWER=600e3,ICON='icon-192.png';
-let items=LS.get('ss-stars',[]).filter(s=>s&&s.id&&s.end);
+let key='ss-stars',items=LS.get(key,[]).filter(s=>s&&s.id&&s.end);
 let T=Object.assign({dur:1500,left:1500,endAt:0,run:false,label:''},LS.get('ss-timer',{}));
 let C=Object.assign({run:false,phase:'idle',endAt:0,askAt:0},LS.get('ss-check',{}));
 let mode=LS.get('ss-mode','timer'),range=LS.get('ss-range',7);
 let col=null,synced=false,actx=null,swReg=null,lastDay=dkey(new Date()),fxQ=Promise.resolve();
 const hold={g:null,r:null};let flight=null;
-const saveT=()=>LS.set('ss-timer',T),saveC=()=>LS.set('ss-check',C),saveI=()=>LS.set('ss-stars',items);
+const saveT=()=>LS.set('ss-timer',T),saveC=()=>LS.set('ss-check',C),saveI=()=>LS.set(key,items);
 const sess=()=>items.filter(x=>x.kind!=='r'),reds=()=>items.filter(x=>x.kind==='r');
 const totalMin=()=>sess().reduce((a,s)=>a+(+s.min||0),0);
 const goldN=()=>Math.floor(totalMin()/60+1e-9);
@@ -221,7 +241,8 @@ function dayMin(d){const a=new Date(d);a.setHours(0,0,0,0);const b=new Date(a);b
   for(const s of sess()){const st=s.start||s.end-(s.min||0)*6e4,o=Math.min(b.getTime(),s.end)-Math.max(a.getTime(),st);if(o>0)m+=(s.end>st?o/(s.end-st):1)*(+s.min||0)}return m}
 function banner(t,bad){const b=$('#banner');b.textContent=t;b.className='banner'+(bad?' bad':'');void b.offsetWidth;b.classList.add('on')}
 function note(t){$('#sync').textContent=t}
-function push(x){if(col)col.doc(x.id).set(x).catch(()=>note('Could not reach your account — kept in this browser.'))}
+const store={push:null,del:null};
+function push(x){try{if(store.push)store.push(x)}catch(e){}}
 
 /* ---------- sound + notifications ---------- */
 function unlock(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume()}catch(e){}}
@@ -343,6 +364,8 @@ function renderBuckets(){
   $('#jarG').innerHTML=jarSvg(g,'sg');$('#jarR').innerHTML=jarSvg(r,'sr');$('#gN').textContent=g;$('#rN').textContent=r;
   $('#gBar').style.width=(rem/60*100)+'%';$('#gNext').textContent=`${Math.round(rem)} of 60 min to the next gold star`;
   const lr=reds().sort((a,b)=>b.end-a.end)[0];
+  const L=levelOf(g);$('#lvl').innerHTML=`Level ${L.i+1}: <strong>${esc(L.name)}</strong>`+(L.next?` <span class="sub">· ${L.next[0]-g} more star${L.next[0]-g===1?'':'s'} to ${esc(L.next[1])}</span>`:' <span class="sub">· top level!</span>');
+  if(typeof renderAcct==='function')renderAcct();
   $('#rLast').textContent=lr?'Last one: '+new Date(lr.end).toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})+' at '+hm(new Date(lr.end)):'None yet. Keep it that way.';
 }
 function renderStats(){
@@ -393,7 +416,7 @@ $('#ranges').innerHTML=[7,14,30].map(r=>`<button data-r="${r}" aria-pressed="${r
 $('#ranges').addEventListener('click',e=>{const b=e.target.closest('[data-r]');if(!b)return;range=+b.dataset.r;LS.set('ss-range',range);for(const x of $('#ranges').children)x.setAttribute('aria-pressed',x===b);draw()});
 $('#log').addEventListener('click',e=>{const b=e.target.closest('.del');if(!b)return;
   if(!b.classList.contains('sure')){b.classList.add('sure');b.textContent='Remove?';setTimeout(()=>{if(b.isConnected){b.classList.remove('sure');b.textContent='Remove'}},3000);return}
-  const id=b.dataset.id;items=items.filter(s=>s.id!==id);saveI();if(col)col.doc(id).delete().catch(()=>{});renderAll()});
+  const id=b.dataset.id;items=items.filter(s=>s.id!==id);saveI();if(store.del)store.del(id);renderAll()});
 
 /* ---------- clock (a worker keeps ticking when the window is in the background) ---------- */
 function tick(){
@@ -415,31 +438,64 @@ if('serviceWorker' in navigator&&canNotify()&&/^https:|^http:\/\/(localhost|127\
 }
 try{const q=new URLSearchParams(location.search);if(q.get('answer')){answer(q.get('answer'),q.get('askAt'),true);history.replaceState(null,'',location.pathname)}}catch(e){}
 
-/* ---------- account sync (claude.ai version) ---------- */
-(async()=>{
-  if(!window.claude||!claude.use){note('Saved in this browser.');return}
-  try{
-    const [db,user]=await Promise.all([claude.use('db'),claude.use('user')]);
-    const uid=user&&await user.id();
-    if(!db||!uid){note('Saved in this browser only — sign in to keep stars on your account.');return}
-    col=db.collection('data/users/'+uid);
-    const tm=setTimeout(()=>note('Your account is slow to answer — kept in this browser meanwhile.'),10000);
-    col.onSnapshot(async snap=>{
-      const remote=snap.docs.map(d=>d.data()).filter(v=>v&&v.id&&v.end),ids=new Set(remote.map(r=>r.id));
-      if(!synced&&!snap.metadata.fromCache){
-        synced=true;clearTimeout(tm);const missing=items.filter(s=>!ids.has(s.id));items=remote.concat(missing);
-        for(const s of missing){try{await col.doc(s.id).set(s)}catch(e){}}
-        note('Saved to your Claude account and synced across devices.');
-      }else if(synced)items=remote.map(r=>Object.assign({},r));
-      else items=remote.concat(items.filter(s=>!ids.has(s.id)));
-      saveI();renderAll();
-    },()=>{clearTimeout(tm);col=null;note('Account sync stopped — kept in this browser.')});
-  }catch(e){note('Saved in this browser.')}
-})();
+/* ---------- levels ---------- */
+const LEVELS=[[0,'Professional Procrastinator'],[5,'Study Noob'],[15,'Book Explorer'],[30,'Weekend Scholar'],[60,'Assignment Survivor'],[100,'Library Resident'],[175,'Academic Weapon'],[275,'Sleep Deprived Genius'],[400,'Knowledge Addict'],[600,'Professor of Madness']];
+function levelOf(n){let i=0;while(i+1<LEVELS.length&&n>=LEVELS[i+1][0])i++;return{i,name:LEVELS[i][1],next:LEVELS[i+1]||null}}
+
+/* ---------- account (cloud.js talks to the app through window.SS) ---------- */
+let me=null,cloudOK=false,signup=false,newPhoto='';
+const avatar=(p,n,c)=>p?`<img class="${c}" src="${esc(p)}" alt="" referrerpolicy="no-referrer">`:`<span class="${c} ini">${esc(((n||'?').trim()[0]||'?').toUpperCase())}</span>`;
+function renderAcct(){const a=$('#acct');
+  if(!cloudOK){a.innerHTML='';return}
+  if(!me){a.innerHTML='<button id="signin" type="button">Sign in</button>';return}
+  a.innerHTML=`<button class="me" id="meBtn" type="button" aria-label="Your profile">${avatar(me.photo,me.name,'av')}<span><b>${esc(me.name)}</b><small>${esc(levelOf(hold.g??goldN()).name)}</small></span></button>`}
+const openM=s=>{$(s).hidden=false;const f=$(s).querySelector('input:not(.sr),button.gbtn');if(f)f.focus()},closeM=s=>{$(s).hidden=true};
+document.addEventListener('click',e=>{const c=e.target.closest('[data-close]');if(c)closeM(c.dataset.close);
+  if(e.target.id==='auth'||e.target.id==='prof')closeM('#'+e.target.id)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeM('#auth');closeM('#prof')}});
+$('#acct').addEventListener('click',e=>{if(e.target.closest('#signin')){setMode(false);openM('#auth')}else if(e.target.closest('#meBtn'))openProfile()});
+function setMode(s){signup=s;$('#nmRow').hidden=!s;$('#authGo').textContent=s?'Create account':'Sign in';
+  $('#authSw').textContent=s?'Have an account? Sign in':'New here? Create an account';$('#authH').textContent=s?'Create your account':'Sign in to Study Stars';
+  $('#pw').autocomplete=s?'new-password':'current-password';$('#authErr').textContent=''}
+const AERR={'auth/invalid-credential':'Wrong email or password.','auth/wrong-password':'Wrong email or password.','auth/user-not-found':'No account with that email. Create one instead?',
+  'auth/invalid-email':'That email address doesn’t look right.','auth/email-already-in-use':'An account with this email already exists — sign in instead.',
+  'auth/weak-password':'Password needs at least 6 characters.','auth/missing-password':'Type your password.','auth/too-many-requests':'Too many tries. Wait a few minutes and try again.',
+  'auth/network-request-failed':'No internet connection.','auth/unauthorized-domain':'This web address isn’t allowed yet. In Firebase: Authentication → Settings → Authorized domains → add it.',
+  'auth/operation-not-allowed':'This sign-in method isn’t turned on in Firebase yet.'};
+function aErr(e){const c=e&&e.code||'';if(c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request')return;$('#authErr').textContent=AERR[c]||'Something went wrong ('+(c||e.message)+').'}
+function busy(b){for(const id of ['#gBtn','#authGo'])$(id).disabled=b}
+$('#authSw').addEventListener('click',()=>setMode(!signup));
+$('#gBtn').addEventListener('click',async()=>{busy(true);try{await SScloud.google();closeM('#auth')}catch(e){aErr(e)}busy(false)});
+$('#authForm').addEventListener('submit',async e=>{e.preventDefault();const em=$('#em').value.trim(),pw=$('#pw').value,nm=$('#nm').value.trim();
+  if(signup&&!nm){$('#authErr').textContent='Pick a display name.';return}
+  busy(true);try{if(signup)await SScloud.emailUp(em,pw,nm.slice(0,30));else await SScloud.emailIn(em,pw);$('#pw').value='';closeM('#auth')}catch(err){aErr(err)}busy(false)});
+$('#forgot').addEventListener('click',async()=>{const em=$('#em').value.trim();if(!em){$('#authErr').textContent='Type your email above first, then click “Forgot password?”.';return}
+  try{await SScloud.reset(em);$('#authErr').textContent='Password reset email sent — check your inbox (and spam).'}catch(e){aErr(e)}});
+function openProfile(){newPhoto=me.photo||'';$('#pName').value=me.name;$('#pPic').innerHTML=avatar(newPhoto,me.name,'avL');$('#pErr').textContent='';
+  const g=goldN(),L=levelOf(g);$('#pInfo').textContent=`${me.email?me.email+' · ':''}${g} stars · Level ${L.i+1}: ${L.name}`;openM('#prof')}
+function shrink(f){return new Promise((res,rej)=>{const u=URL.createObjectURL(f),im=new Image();
+  im.onload=()=>{const s=160,c=document.createElement('canvas'),k=Math.min(im.width,im.height);c.width=c.height=s;
+    c.getContext('2d').drawImage(im,(im.width-k)/2,(im.height-k)/2,k,k,0,0,s,s);URL.revokeObjectURL(u);res(c.toDataURL('image/jpeg',.82))};
+  im.onerror=()=>{URL.revokeObjectURL(u);rej()};im.src=u})}
+$('#pFile').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{newPhoto=await shrink(f);$('#pPic').innerHTML=avatar(newPhoto,$('#pName').value||me.name,'avL')}catch(err){$('#pErr').textContent='Couldn’t read that picture. Try a JPG or PNG.'}});
+$('#pRm').addEventListener('click',()=>{newPhoto='';$('#pPic').innerHTML=avatar('',$('#pName').value||me.name,'avL')});
+$('#pSave').addEventListener('click',async()=>{const n=$('#pName').value.trim().slice(0,30);if(!n){$('#pErr').textContent='Your name can’t be empty.';return}
+  $('#pSave').disabled=true;try{await SScloud.saveProfile(n,newPhoto);me.name=n;me.photo=newPhoto;renderAcct();closeM('#prof')}catch(e){$('#pErr').textContent='Couldn’t save ('+(e.code||e.message)+').'}$('#pSave').disabled=false});
+$('#pOut').addEventListener('click',async()=>{try{await SScloud.out()}catch(e){}closeM('#prof')});
+window.SS={store,banner,note,
+  offline:()=>LS.get('ss-stars',[]).filter(s=>s&&s.id&&s.end),
+  clearOffline(){LS.set('ss-stars',[])},
+  ready(){cloudOK=true;renderAcct()},
+  failed(){cloudOK=false;renderAcct();note('Online features couldn’t load, so you’re offline. Stars are saved on this laptop.')},
+  signedIn(u){me=u;key='ss-acct-'+u.uid;items=LS.get(key,[]);renderAll();note('Signed in as '+u.name+'. Your stars sync to your account.')},
+  signedOut(){me=null;store.push=store.del=null;key='ss-stars';items=LS.get(key,[]).filter(s=>s&&s.id&&s.end);renderAll();note('Not signed in. Stars are saved on this laptop only — sign in to keep them in your account.')},
+  setItems(a){items=a;saveI();renderAll()}};
 
 $('#bigp').setAttribute('d',starPath(100,106,94));
 nUI();tick();renderAll();
 }
 </script>
+<script type="module" src="cloud.js" onerror="window.SS&&SS.failed()"></script>
 </body>
 </html>
