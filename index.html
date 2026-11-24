@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#5b3fa8">
+<title>Study Stars</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: calm, encouraging, a little cheeky - a desk tool you leave open while studying
+   IDEA: an observatory star log - every hour studied becomes a star dropped into a glass jar
+   PICTURE: big countdown ring first; two star jars (gold hours, red slips); a daily hours bar chart
+   COLOUR and TYPE: white / deep plum night, star gold accent, violet support, red for slips; Outfit + Inter
+   LAYOUT: timer with mode tabs, jars + stats, hours chart, session log */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#17121f);--panel:light-dark(#f3f0f8,#221a2e);--ink:light-dark(#18141f,#f3eef9);
+--soft:light-dark(#5d566a,#b8aec6);--line:light-dark(#e2dcea,#352a44);--gold:light-dark(#e09a00,#ffc93c);
+--gold2:light-dark(#fff3cf,#3b2f17);--vio:light-dark(#5b3fa8,#b79cff);--vio2:light-dark(#ebe4fb,#2d2240);--red:light-dark(#c42a2a,#ff8a8a);--red2:light-dark(#fde6e6,#3d1c22)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2{font-family:Outfit,Inter,sans-serif;line-height:1.05;margin:0;text-wrap:balance}
+h1{font-size:clamp(28px,4vw,40px)}h2{font-size:24px}
+.band{padding:clamp(24px,4vw,52px) max(5vw,16px)}.band+.band{padding-top:0}
+.wrap{max-width:1100px;margin:0 auto}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.sub{color:var(--soft);font-size:14px}
+.timer{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(20px,4vw,56px);align-items:center;background:var(--panel);border-radius:24px;padding:clamp(20px,4vw,44px)}
+.ring{position:relative;width:min(100%,370px);aspect-ratio:1;margin:0 auto}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .tr{fill:none;stroke:var(--line);stroke-width:6}
+.ring .pr{fill:none;stroke:var(--gold);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .3s linear}
+.ring.asking .pr{stroke:var(--red)}
+.read{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:0 14%}
+.time{font:600 clamp(48px,11vw,84px)/1 Outfit,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.state{color:var(--soft);font-size:15px;margin-top:8px}
+.ctl{display:grid;gap:18px}
+.tabs{display:inline-flex;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px;flex-wrap:wrap}
+.tabs button{border:0;min-height:40px}
+label{font-weight:600;font-size:14px;display:block;margin-bottom:8px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button,input{font:inherit;font-size:16px;color:inherit}
+button{min-height:44px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--bg);cursor:pointer;font-weight:500}
+button:hover{border-color:var(--vio)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--vio);outline-offset:2px}
+button[aria-pressed=true]{background:var(--vio);color:var(--bg);border-color:var(--vio)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.big{min-height:56px;padding:0 28px;font-size:18px;font-weight:600;border:0;background:var(--gold);color:#1d1503}
+.big.pause{background:var(--vio);color:var(--bg)}.big.stop{background:var(--red);color:var(--bg)}
+input{min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 12px;width:100%}
+.mins{display:flex;align-items:center;gap:8px}.mins input{width:84px;text-align:center}
+.info{margin:0;font-size:15px;color:var(--soft)}
+.banner{display:none;padding:14px 18px;border-radius:14px;background:var(--gold2);font-weight:500}
+.banner.bad{background:var(--red2)}
+.banner.on{display:block;animation:pop .5s ease}
+@keyframes pop{0%{transform:scale(.94);opacity:0}100%{transform:none;opacity:1}}
+.buckets{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.bk{display:flex;gap:18px;align-items:center;border:1px solid var(--line);border-radius:20px;padding:16px 20px}
+.bk b{display:block;font:600 44px/1 Outfit,sans-serif;font-variant-numeric:tabular-nums}
+.bk .t{font-weight:600}
+.jar{width:clamp(96px,22vw,150px);height:auto;flex:none;overflow:visible;transform-origin:50% 85%}
+.jar.bump{animation:bump .7s ease}
+@keyframes bump{30%{transform:scale(1.14) rotate(-3deg)}60%{transform:scale(.97) rotate(2deg)}}
+.glass{fill:light-dark(rgba(91,63,168,.06),rgba(183,156,255,.08));stroke:var(--soft);stroke-width:2.5}
+.rim{fill:var(--panel);stroke:var(--soft);stroke-width:2.5}
+.shine{stroke:#fff;opacity:.4;stroke-width:5;stroke-linecap:round;fill:none}
+.sg{fill:var(--gold);stroke:light-dark(#9b6a00,#ffe7a3);stroke-width:1}.sr{fill:#e23b3b;stroke:light-dark(#8a1010,#ffb3b3);stroke-width:1}
+.more{fill:var(--ink);font:600 14px Inter,sans-serif}
+.meter{height:10px;border-radius:6px;background:var(--line);margin:10px 0 6px;overflow:hidden}.meter i{display:block;height:100%;background:var(--gold);border-radius:6px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:20px}
+.stat{border-top:2px solid var(--line);padding-top:10px}.stat.hl{border-color:var(--gold)}
+.stat b{display:block;font:600 28px/1.15 Outfit,sans-serif;font-variant-numeric:tabular-nums;white-space:nowrap}
+.stat span{color:var(--soft);font-size:14px}
+.fig{position:relative;min-height:340px;margin-top:16px}.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+.gl{stroke:var(--line);stroke-width:1}.ax{fill:var(--soft);font-size:12px;font-family:Inter,sans-serif}
+.bar{fill:var(--vio)}.bar.t{fill:var(--gold)}.val{fill:var(--ink);font:600 12px Inter,sans-serif}
+.empty{fill:var(--soft);font-size:15px;font-family:Inter,sans-serif}
+table{width:100%;border-collapse:collapse;margin-top:12px}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:13px;color:var(--soft);font-weight:600}
+.nw{white-space:nowrap;font-variant-numeric:tabular-nums}
+td .del{min-height:36px;padding:0 12px;font-size:14px}td .del.sure{color:var(--red);border-color:var(--red)}
+.tag{display:inline-block;padding:2px 10px;border-radius:20px;font-size:13px;background:var(--vio2)}.tag.r{background:var(--red2);color:var(--red)}
+.note{color:var(--soft);font-size:13px;margin-top:10px}.mt{margin-top:40px}
+/* celebration */
+.fx{position:fixed;inset:0;z-index:60;display:grid;place-items:center;overflow:hidden}
+.fx[hidden]{display:none}
+.fx .bg{position:absolute;inset:0;transition:opacity .9s}
+.fx.gold .bg{background:radial-gradient(circle,rgba(255,214,90,.6),rgba(28,16,40,.93) 65%)}
+.fx.red .bg{background:radial-gradient(circle,rgba(255,70,70,.55),rgba(32,8,14,.93) 65%)}
+.rays{position:absolute;width:160vmax;height:160vmax;left:50%;top:50%;margin:-80vmax 0 0 -80vmax;background:repeating-conic-gradient(rgba(255,236,170,.3) 0 5deg,transparent 5deg 15deg);-webkit-mask:radial-gradient(circle,#000,transparent 55%);mask:radial-gradient(circle,#000,transparent 55%);animation:spin 16s linear infinite;transition:opacity .6s}
+.fx.red .rays{background:repeating-conic-gradient(rgba(255,150,150,.28) 0 5deg,transparent 5deg 15deg)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fxc{position:relative;display:grid;justify-items:center;gap:10px;text-align:center;padding:16px;animation:grow .7s cubic-bezier(.2,1.5,.4,1)}
+@keyframes grow{from{transform:scale(.2);opacity:0}}
+#big{width:min(58vmin,420px);height:auto;overflow:visible;animation:shine 1.2s ease-in-out infinite alternate}
+@keyframes shine{from{filter:drop-shadow(0 0 16px rgba(255,210,80,.7))}to{filter:drop-shadow(0 0 64px rgba(255,236,150,1))}}
+.fx.red #big{animation-name:shineR}@keyframes shineR{from{filter:drop-shadow(0 0 16px rgba(255,80,80,.7))}to{filter:drop-shadow(0 0 60px rgba(255,140,140,1))}}
+.fxtx{color:#fff;transition:opacity .4s}.fxtx b{display:block;font:600 clamp(26px,5vw,44px)/1.1 Outfit,sans-serif}.fxtx span{opacity:.85}
+.fx.leave .bg,.fx.leave .rays,.fx.leave .fxtx{opacity:0}
+#sp{position:absolute;left:50%;top:50%;width:0;height:0}#sp i{position:absolute;left:-12px;top:-12px;width:24px;height:24px}
+#sp svg{width:100%;height:100%;fill:#ffe48a}.fx.red #sp svg{fill:#ff9c9c}
+/* ask dialog */
+.ask{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(20,10,30,.6);padding:16px}
+.ask[hidden]{display:none}
+.card{background:var(--bg);border-radius:22px;padding:clamp(20px,4vw,32px);max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);animation:pop .4s ease}
+.card p{margin:10px 0 20px;font-size:17px}.card .row button{flex:1 1 200px;font-weight:600}
+.yes{background:var(--gold);border:0;color:#1d1503}.no{background:var(--red);border:0;color:#fff}
+@media(max-width:760px){.timer,.buckets{grid-template-columns:minmax(0,1fr)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:6.5em;margin-inline-start:-7em;color:var(--soft)}.stack td:empty{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+<section class="band"><div class="wrap">
+  <div class="top"><h1>Study Stars</h1>
+    <div class="tabs" id="tabs"><button data-m="timer">Timer</button><button data-m="check">10-min check-in</button></div></div>
+  <div class="timer">
+    <div class="ring" id="ring">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="tr" cx="50" cy="50" r="45"/><circle id="prog" class="pr" cx="50" cy="50" r="45" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/></svg>
+      <div class="read"><div class="time" id="time">25:00</div><div class="state" id="state">Ready</div></div>
+    </div>
+    <div class="ctl">
+      <div id="tctl"><label for="mins">Session length</label>
+        <div class="row" id="presets"></div>
+        <div class="mins" style="margin-top:10px"><button id="minus" aria-label="5 minutes less">−5</button><input id="mins" type="number" min="1" max="240" inputmode="numeric" value="25"><span>min</span><button id="plus" aria-label="5 minutes more">+5</button></div>
+      </div>
+      <div id="cctl" hidden>
+        <p class="info">Every 10 minutes you'll be asked if you're still studying. Answer “still studying” and the 10 minutes go into your hours and the countdown starts again. If you don't answer within 10 minutes, the timer stops and that block doesn't count.</p>
+        <div class="row" style="margin-top:12px"><button id="nbtn" hidden>Turn on notifications</button><span id="nstat" class="sub"></span></div>
+      </div>
+      <div><label for="label">What are you studying? <span class="sub">(optional)</span></label><input id="label" list="labels" maxlength="60" placeholder="e.g. Chemistry revision"><datalist id="labels"></datalist></div>
+      <div class="row"><button class="big" id="go">Start</button><button id="reset">Reset</button></div>
+      <div class="banner" id="banner" role="status"></div>
+    </div>
+  </div>
+  <div class="stats" id="stats"></div>
+</div></section>
+
+<section class="band"><div class="wrap">
+  <div class="buckets">
+    <div class="bk"><svg id="jarG" class="jar" viewBox="0 0 160 170" role="img" aria-label="Gold star bucket"></svg>
+      <div><b id="gN">0</b><span class="t">Gold stars</span> <span class="sub">· 1 star = 1 hour studied</span>
+        <div class="meter"><i id="gBar" style="width:0"></i></div><span class="sub" id="gNext"></span></div></div>
+    <div class="bk"><svg id="jarR" class="jar" viewBox="0 0 160 170" role="img" aria-label="Red star bucket"></svg>
+      <div><b id="rN">0</b><span class="t">Red stars</span> <span class="sub">· each “gon kalakanniyek” answer</span>
+        <p class="sub" id="rLast" style="margin:8px 0 0"></p></div></div>
+  </div>
+</div></section>
+
+<section class="band"><div class="wrap">
+  <div class="top"><h2>Hours studied per day</h2><div class="row" id="ranges"></div></div>
+  <p class="sub" style="margin:0">Counted from 12:00 am to 11:59 pm. Only finished sessions and confirmed check-ins count.</p>
+  <div class="fig" id="chartbox"><svg id="chart" role="img" aria-label="Hours studied per day"></svg></div>
+  <h2 class="mt">Session log</h2>
+  <div id="log"></div>
+  <p class="note" id="sync">Saved in this browser.</p>
+</div></section>
+
+<div class="ask" id="ask" hidden><div class="card" role="alertdialog" aria-labelledby="askh">
+  <h2 id="askh">10 minutes done</h2>
+  <p>Are you still studying? Or have you started being a gon kalakanniyek?</p>
+  <div class="row"><button class="yes" id="aYes">I'm still studying</button><button class="no" id="aNo">I'm a gon kalakanniyek</button></div>
+  <p class="sub" id="askT" style="margin:14px 0 0"></p>
+</div></div>
+
+<div class="fx" id="fx" hidden><div class="bg"></div><div class="rays"></div><div id="sp"></div>
+  <div class="fxc"><svg id="big" viewBox="0 0 200 200" aria-hidden="true"><defs>
+    <radialGradient id="gG" cx="45%" cy="40%" r="65%"><stop offset="0" stop-color="#fffbe6"/><stop offset=".45" stop-color="#ffd447"/><stop offset="1" stop-color="#e08600"/></radialGradient>
+    <radialGradient id="gR" cx="45%" cy="40%" r="65%"><stop offset="0" stop-color="#ffe3e3"/><stop offset=".45" stop-color="#ff4d4d"/><stop offset="1" stop-color="#9c0c0c"/></radialGradient></defs>
+    <path id="bigp" d="" fill="url(#gG)" stroke="#fff6c8" stroke-width="3" stroke-linejoin="round"/></svg>
+    <div class="fxtx"><b id="fxt"></b><span id="fxs"></span></div></div></div>
+
+<script>
+{
+const $=s=>document.querySelector(s);
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const pad=n=>String(n).padStart(2,'0');
+const dkey=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const hm=d=>pad(d.getHours())+':'+pad(d.getMinutes());
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clock=s=>{s=Math.max(0,Math.ceil(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h?h+':'+pad(m):pad(m))+':'+pad(x)};
+const fmtM=m=>{m=Math.round(m);const h=Math.floor(m/60),r=m%60;return h?h+' h '+pad(r)+' min':r+' min'};
+const starPath=(cx,cy,r)=>{let p='';for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.45:r;p+=(i?'L':'M')+(cx+rr*Math.cos(a)).toFixed(1)+' '+(cy+rr*Math.sin(a)).toFixed(1)}return p+'Z'};
+const PRE=[15,25,45,60,90],CHECK=600e3,ANSWER=600e3,ICON='icon-192.png';
+let items=LS.get('ss-stars',[]).filter(s=>s&&s.id&&s.end);
+let T=Object.assign({dur:1500,left:1500,endAt:0,run:false,label:''},LS.get('ss-timer',{}));
+let C=Object.assign({run:false,phase:'idle',endAt:0,askAt:0},LS.get('ss-check',{}));
+let mode=LS.get('ss-mode','timer'),range=LS.get('ss-range',7);
+let col=null,synced=false,actx=null,swReg=null,lastDay=dkey(new Date()),fxQ=Promise.resolve();
+const hold={g:null,r:null};let flight=null;
+const saveT=()=>LS.set('ss-timer',T),saveC=()=>LS.set('ss-check',C),saveI=()=>LS.set('ss-stars',items);
+const sess=()=>items.filter(x=>x.kind!=='r'),reds=()=>items.filter(x=>x.kind==='r');
+const totalMin=()=>sess().reduce((a,s)=>a+(+s.min||0),0);
+const goldN=()=>Math.floor(totalMin()/60+1e-9);
+const leftNow=()=>T.run?(T.endAt-Date.now())/1000:T.left;
+function dayMin(d){const a=new Date(d);a.setHours(0,0,0,0);const b=new Date(a);b.setDate(b.getDate()+1);let m=0;
+  for(const s of sess()){const st=s.start||s.end-(s.min||0)*6e4,o=Math.min(b.getTime(),s.end)-Math.max(a.getTime(),st);if(o>0)m+=(s.end>st?o/(s.end-st):1)*(+s.min||0)}return m}
+function banner(t,bad){const b=$('#banner');b.textContent=t;b.className='banner'+(bad?' bad':'');void b.offsetWidth;b.classList.add('on')}
+function note(t){$('#sync').textContent=t}
+function push(x){if(col)col.doc(x.id).set(x).catch(()=>note('Could not reach your account — kept in this browser.'))}
+
+/* ---------- sound + notifications ---------- */
+function unlock(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume()}catch(e){}}
+function tone(fs,gap){try{if(!actx)return;const t=actx.currentTime;fs.forEach((f,i)=>{const o=actx.createOscillator(),g=actx.createGain(),s=t+i*gap;o.frequency.value=f;g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(.25,s+.02);g.gain.exponentialRampToValueAtTime(.001,s+.8);o.connect(g).connect(actx.destination);o.start(s);o.stop(s+.9)})}catch(e){}}
+const canNotify=()=>'Notification' in window&&window.top===window&&window.isSecureContext;
+async function notify(title,o){try{if(!canNotify()||Notification.permission!=='granted')return false;
+  if(swReg){await swReg.showNotification(title,o);return true}
+  const {actions,...rest}=o;const n=new Notification(title,rest);n.onclick=()=>{window.focus();n.close()};return true}catch(e){return false}}
+function closeNotes(tag){try{if(swReg)swReg.getNotifications({tag}).then(ns=>ns.forEach(n=>n.close()))}catch(e){}}
+function nUI(){const b=$('#nbtn'),s=$('#nstat');
+  if(!canNotify()){b.hidden=true;s.textContent='Pop-up notifications don’t work in this view. Install the app to get them. Here you’ll get an in-app alert and a sound.';return}
+  const p=Notification.permission;b.hidden=p!=='default';
+  s.textContent=p==='granted'?(swReg?'Notifications are on, with answer buttons.':'Notifications are on. Click one to come back and answer.'):p==='denied'?'Notifications are blocked. Allow them in your browser’s site settings.':'Turn these on so the question pops up even when you’re in another app.'}
+$('#nbtn').addEventListener('click',async()=>{try{await Notification.requestPermission()}catch(e){}nUI()});
+
+/* ---------- normal timer ---------- */
+function setDur(m){if(T.run)return;m=Math.min(240,Math.max(1,Math.round(m)||25));T.dur=m*60;T.left=T.dur;saveT();render()}
+function completeTimer(){
+  const end=T.endAt,s={id:'s'+end,kind:'s',mode:'timer',end,start:end-T.dur*1000,min:Math.round(T.dur/60),label:(T.label||'').trim().slice(0,60)};
+  T.run=false;T.left=T.dur;T.endAt=0;saveT();tone([784,988,1319],.18);
+  banner(`Session done — ${s.min} min${s.label?' of '+s.label:''} added to today’s hours.`);
+  notify('Session complete',{body:`${s.min} minutes added to today’s hours.`,tag:'timer',icon:ICON});
+  addSession(s);
+}
+function toggleTimer(){
+  if(T.run){T.left=leftNow();T.run=false}else{unlock();T.endAt=Date.now()+T.left*1000;T.run=true;$('#banner').classList.remove('on')}
+  saveT();render();
+}
+
+/* ---------- 10-minute check-in ---------- */
+function startCheck(){unlock();Object.assign(C,{run:true,phase:'count',endAt:Date.now()+CHECK,askAt:0});saveC();$('#banner').classList.remove('on');render()}
+function stopCheck(msg){Object.assign(C,{run:false,phase:'idle',endAt:0,askAt:0});saveC();closeNotes('checkin');render();if(msg)banner(msg,true)}
+function ask(){
+  C.phase='ask';C.askAt=C.endAt;saveC();tone([880,660,880,660],.25);
+  notify('Study check-in',{body:'Are you still studying? Or have you started being a gon kalakanniyek?',tag:'checkin',renotify:true,requireInteraction:true,icon:ICON,
+    actions:[{action:'study',title:"I'm still studying"},{action:'gon',title:"I'm a gon kalakanniyek"}],data:{kind:'ask',askAt:C.askAt}});
+  render();
+}
+function answer(choice,askAt,fromSW){
+  if(!C.run||C.phase!=='ask'||(askAt&&+askAt!==C.askAt))return;
+  if(choice==='study'){
+    const s={id:'c'+C.askAt,kind:'s',mode:'check',start:C.askAt-CHECK,end:C.askAt,min:10,label:(T.label||'').trim().slice(0,60)};
+    C.phase='count';C.endAt=Date.now()+CHECK;C.askAt=0;saveC();closeNotes('checkin');
+    banner('Nice. 10 minutes added — next check-in at '+hm(new Date(C.endAt))+'.');addSession(s);
+  }else if(choice==='gon'){
+    const now=Date.now();closeNotes('checkin');
+    if(!fromSW)notify('You will definitely regret this decision',{body:'You will get C- for your exam.',tag:'regret',icon:ICON});
+    stopCheck();banner('You will definitely regret this decision. You will get C- for your exam.',true);
+    addRed({id:'r'+now,kind:'r',end:now,label:(T.label||'').trim().slice(0,60)});
+  }
+}
+function expire(){
+  notify('Check-in timer stopped',{body:'No answer within 10 minutes, so the last 10 minutes were not counted.',tag:'checkin',icon:ICON});
+  stopCheck('No answer within 10 minutes — the check-in timer stopped and the last 10 minutes were not counted.');
+}
+$('#aYes').addEventListener('click',()=>answer('study'));
+$('#aNo').addEventListener('click',()=>answer('gon'));
+
+/* ---------- stars + celebration ---------- */
+function addSession(s){if(items.some(x=>x.id===s.id))return;const b=goldN();items.push(s);saveI();push(s);const a=goldN();if(a>b)celebrate('g',b,a);renderAll()}
+function addRed(r){const b=reds().length;items.push(r);saveI();push(r);celebrate('r',b,b+1);renderAll()}
+function celebrate(k,before,after){if(hold[k]===null)hold[k]=before;renderBuckets();fxQ=fxQ.then(()=>runFx(k,after))}
+function sparkle(){const c=$('#sp'),n=18;c.innerHTML=Array.from({length:n},()=>`<i><svg viewBox="0 0 24 24"><path d="${starPath(12,12,11)}"/></svg></i>`).join('');
+  if(!c.animate)return;[...c.children].forEach((el,i)=>{const a=i/n*Math.PI*2+Math.random()*.3,d=150+Math.random()*280;
+    el.animate([{transform:'translate(0,0) scale(.2)',opacity:1},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d}px) scale(1.1)`,opacity:0}],{duration:1500+Math.random()*900,delay:Math.random()*400,easing:'cubic-bezier(.2,.7,.3,1)',fill:'forwards'})})}
+function runFx(k,n){return new Promise(res=>{
+  const fx=$('#fx'),big=$('#big'),jar=$(k==='g'?'#jarG':'#jarR'),rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  $('#ask').hidden=true;fx.className='fx '+(k==='g'?'gold':'red');fx.hidden=false;
+  $('#bigp').setAttribute('fill',k==='g'?'url(#gG)':'url(#gR)');$('#bigp').setAttribute('stroke',k==='g'?'#fff6c8':'#ffd6d6');
+  $('#fxt').textContent=k==='g'?(n===1?'Your first hour of study!':`One more hour done — star number ${n}!`):'A red star. C- incoming.';
+  $('#fxs').textContent=k==='g'?'Watch it go into your star bucket…':'Into the red bucket it goes…';
+  if(flight){flight.cancel();flight=null}
+  sparkle();if(k==='g')tone([523,659,784,1047],.14);else tone([392,330,262],.25);
+  try{jar.scrollIntoView({block:'center'})}catch(e){}
+  setTimeout(()=>{
+    const done=()=>{fx.hidden=true;fx.classList.remove('leave');if(flight){flight.cancel();flight=null}
+      hold[k]=null;renderBuckets();jar.classList.remove('bump');void jar.getBoundingClientRect();jar.classList.add('bump');render();res()};
+    const r=big.getBoundingClientRect(),t=jar.getBoundingClientRect();
+    fx.classList.add('leave');
+    if(rm||!big.animate){setTimeout(done,300);return}
+    const dx=t.left+t.width/2-(r.left+r.width/2),dy=t.top+t.height*.6-(r.top+r.height/2),s=Math.max(.04,t.width*.14/r.width);
+    const a=flight=big.animate([{transform:'translate(0,0) scale(1) rotate(0deg)'},{transform:`translate(${dx*.4}px,${dy*.2-80}px) scale(.55) rotate(200deg)`,offset:.45},{transform:`translate(${dx}px,${dy}px) scale(${s}) rotate(540deg)`}],{duration:1500,easing:'ease-in-out',fill:'forwards'});
+    a.onfinish=done;
+  },rm?1400:2800);
+})}
+
+/* ---------- rendering ---------- */
+function render(){
+  const now=Date.now(),busy=T.run||C.run;let l,frac,st,ask=false;
+  for(const b of $('#tabs').children){b.setAttribute('aria-pressed',b.dataset.m===mode);b.disabled=busy&&b.dataset.m!==mode}
+  $('#tctl').hidden=mode!=='timer';$('#cctl').hidden=mode!=='check';$('#reset').hidden=mode!=='timer';
+  const g=$('#go');
+  if(mode==='timer'){
+    l=leftNow();frac=l/T.dur;const paused=!T.run&&T.left<T.dur;
+    st=T.run?'Focus — '+(T.label||'studying'):paused?'Paused':'Ready';
+    g.textContent=T.run?'Pause':paused?'Resume':'Start';g.className='big'+(T.run?' pause':'');
+    const m=Math.round(T.dur/60);
+    $('#presets').innerHTML=PRE.map(p=>`<button data-p="${p}" aria-pressed="${p===m}" ${T.run?'disabled':''}>${p} min</button>`).join('');
+    for(const id of ['#minus','#plus','#mins'])$(id).disabled=T.run;
+    if(document.activeElement!==$('#mins'))$('#mins').value=m;
+  }else{
+    if(C.run&&C.phase==='ask'){l=(C.askAt+ANSWER-now)/1000;frac=l/(ANSWER/1000);st='Waiting for your answer';ask=true}
+    else if(C.run){l=(C.endAt-now)/1000;frac=l/(CHECK/1000);st='Studying — check-in at '+hm(new Date(C.endAt))}
+    else{l=CHECK/1000;frac=1;st='Ready — asks every 10 minutes'}
+    g.textContent=C.run?'Stop':'Start check-in';g.className='big'+(C.run?' stop':'');
+  }
+  $('#time').textContent=clock(l);$('#state').textContent=st;$('#ring').classList.toggle('asking',ask);
+  $('#prog').setAttribute('stroke-dashoffset',String(100*(1-Math.max(0,Math.min(1,frac)))));
+  const showAsk=C.run&&C.phase==='ask'&&$('#fx').hidden;$('#ask').hidden=!showAsk;
+  if(showAsk)$('#askT').textContent=`Answer within ${clock((C.askAt+ANSWER-now)/1000)}, or the timer stops and these 10 minutes won’t count.`;
+  document.title=ask?'Check-in! · Study Stars':busy?clock(l)+' · Study Stars':'Study Stars';
+}
+function jarSvg(n,cls){let s='<rect class="rim" x="22" y="12" width="116" height="14" rx="7"/><path class="glass" d="M30 26h100q8 0 8 10v110q0 18-18 18H40q-18 0-18-18V36q0-10 8-10z"/>';
+  const max=25;for(let i=0;i<Math.min(n,max);i++){const row=Math.floor(i/5),c=i%5,x=40+c*20+((i*37)%7-3),y=146-row*21+((i*53)%5-2);s+=`<path class="${cls}" d="${starPath(x,y,10)}"/>`}
+  if(n>max)s+=`<text class="more" x="80" y="48" text-anchor="middle">+${n-max}</text>`;
+  return s+'<path class="shine" d="M38 46v84"/>'}
+function renderBuckets(){
+  const g=hold.g??goldN(),r=hold.r??reds().length,tm=totalMin(),rem=tm%60;
+  $('#jarG').innerHTML=jarSvg(g,'sg');$('#jarR').innerHTML=jarSvg(r,'sr');$('#gN').textContent=g;$('#rN').textContent=r;
+  $('#gBar').style.width=(rem/60*100)+'%';$('#gNext').textContent=`${Math.round(rem)} of 60 min to the next gold star`;
+  const lr=reds().sort((a,b)=>b.end-a.end)[0];
+  $('#rLast').textContent=lr?'Last one: '+new Date(lr.end).toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})+' at '+hm(new Date(lr.end)):'None yet. Keep it that way.';
+}
+function renderStats(){
+  const t0=new Date();t0.setHours(0,0,0,0);let wk=0;for(let i=0;i<7;i++){const d=new Date(t0);d.setDate(d.getDate()-i);wk+=dayMin(d)}
+  const days=new Set(sess().map(s=>dkey(new Date(s.end))));let d=new Date(t0),streak=0;if(!days.has(dkey(d)))d.setDate(d.getDate()-1);
+  while(days.has(dkey(d))){streak++;d.setDate(d.getDate()-1)}
+  const it=[[fmtM(dayMin(t0)),'Hours studied today',1],[fmtM(wk),'Last 7 days'],[fmtM(totalMin()),'All time'],[streak,streak===1?'Day streak':'Days streak']];
+  $('#stats').innerHTML=it.map(([v,l,h])=>`<div class="stat${h?' hl':''}"><b>${v}</b><span>${l}</span></div>`).join('');
+  $('#labels').innerHTML=[...new Set(items.map(s=>s.label).filter(Boolean))].slice(-20).map(l=>`<option value="${esc(l)}">`).join('');
+}
+const svg=$('#chart'),box=$('#chartbox');
+function draw(){
+  const W=box.clientWidth,H=box.clientHeight;if(!W||!H)return;
+  const nar=W<520,pl=nar?28:44,pr=8,pt=22,pb=34;
+  const t0=new Date();t0.setHours(0,0,0,0);const days=[];
+  for(let i=range-1;i>=0;i--){const d=new Date(t0);d.setDate(d.getDate()-i);days.push(d)}
+  const vals=days.map(d=>dayMin(d)/60),mx=Math.max(...vals),top=Math.max(2,Math.ceil(mx)),step=top<=4?1:top<=8?2:top<=12?3:4,yt=Math.ceil(top/step)*step;
+  const cw=(W-pl-pr)/range,y=v=>pt+(1-v/yt)*(H-pt-pb);let g='';
+  for(let v=0;v<=yt;v+=step)g+=`<line class="gl" x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}"/><text class="ax" x="${pl-6}" y="${y(v)+4}" text-anchor="end">${v}${nar?'':' h'}</text>`;
+  const ls=Math.ceil(range/(nar?5:range>14?10:14)),bw=Math.min(48,cw*.62);
+  days.forEach((d,i)=>{const cx=pl+cw*(i+.5),v=vals[i],today=i===range-1;
+    if(v>0)g+=`<rect class="bar${today?' t':''}" x="${cx-bw/2}" y="${y(v)}" width="${bw}" height="${Math.max(2,y(0)-y(v))}" rx="4"><title>${esc(d.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'}))}: ${fmtM(v*60)}</title></rect>`;
+    if(v>0&&cw>=26)g+=`<text class="val" x="${cx}" y="${y(v)-6}" text-anchor="middle">${v<10?v.toFixed(1):v.toFixed(0)}</text>`;
+    if((range-1-i)%ls===0)g+=`<text class="ax" x="${cx}" y="${H-pb+18}" text-anchor="middle">${today?'Today':nar?d.getDate():d.toLocaleDateString(undefined,{weekday:'short'})+' '+d.getDate()}</text>`});
+  if(mx===0)g+=`<text class="empty" x="${pl+(W-pl-pr)/2}" y="${pt+(H-pt-pb)/2}" text-anchor="middle">Finish a session to see your first bar</text>`;
+  svg.innerHTML=g;
+}
+new ResizeObserver(draw).observe(box);
+function renderLog(){
+  const rows=[...items].sort((a,b)=>b.end-a.end).slice(0,60);
+  if(!rows.length){$('#log').innerHTML='<p class="sub">No sessions yet. Each finished session or confirmed check-in will be listed here.</p>';return}
+  $('#log').innerHTML=`<table class="stack"><thead><tr><th>Date</th><th>Time</th><th>Length</th><th>Type</th><th>Subject</th><th></th></tr></thead><tbody>${rows.map(s=>{const e=new Date(s.end),r=s.kind==='r';
+    return `<tr><td>${esc(e.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short',year:'numeric'}))}</td><td class="nw">${r?hm(e):hm(new Date(s.start||s.end))+'–'+hm(e)}</td><td class="nw">${r?'—':s.min+' min'}</td><td>${r?'<span class="tag r">Red star</span>':`<span class="tag">${s.mode==='check'?'Check-in':'Timer'}</span>`}</td><td>${esc(s.label)||'<span class="sub">—</span>'}</td><td><button class="del" data-id="${esc(s.id)}">Remove</button></td></tr>`}).join('')}</tbody></table>`+(items.length>60?`<p class="note">Showing the latest 60 of ${items.length}.</p>`:'');
+}
+function renderAll(){renderStats();renderBuckets();draw();renderLog()}
+
+/* ---------- events ---------- */
+$('#tabs').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(!b||b.disabled)return;mode=b.dataset.m;LS.set('ss-mode',mode);$('#banner').classList.remove('on');render()});
+$('#go').addEventListener('click',()=>{if(mode==='timer')toggleTimer();else if(C.run)stopCheck('Check-in stopped. The unfinished 10 minutes were not counted.');else startCheck()});
+$('#reset').addEventListener('click',()=>{T.run=false;T.left=T.dur;T.endAt=0;saveT();render()});
+$('#presets').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(b)setDur(+b.dataset.p)});
+$('#minus').addEventListener('click',()=>setDur(T.dur/60-5));
+$('#plus').addEventListener('click',()=>setDur(T.dur/60+5));
+$('#mins').addEventListener('change',e=>setDur(+e.target.value));
+$('#label').value=T.label;$('#label').addEventListener('input',e=>{T.label=e.target.value;saveT()});
+document.addEventListener('keydown',e=>{if(e.code==='Space'&&!/INPUT|BUTTON/.test(e.target.tagName)&&mode==='timer'){e.preventDefault();toggleTimer()}});
+$('#ranges').innerHTML=[7,14,30].map(r=>`<button data-r="${r}" aria-pressed="${r===range}">${r} days</button>`).join('');
+$('#ranges').addEventListener('click',e=>{const b=e.target.closest('[data-r]');if(!b)return;range=+b.dataset.r;LS.set('ss-range',range);for(const x of $('#ranges').children)x.setAttribute('aria-pressed',x===b);draw()});
+$('#log').addEventListener('click',e=>{const b=e.target.closest('.del');if(!b)return;
+  if(!b.classList.contains('sure')){b.classList.add('sure');b.textContent='Remove?';setTimeout(()=>{if(b.isConnected){b.classList.remove('sure');b.textContent='Remove'}},3000);return}
+  const id=b.dataset.id;items=items.filter(s=>s.id!==id);saveI();if(col)col.doc(id).delete().catch(()=>{});renderAll()});
+
+/* ---------- clock (a worker keeps ticking when the window is in the background) ---------- */
+function tick(){
+  const now=Date.now();
+  if(T.run&&T.endAt<=now)completeTimer();
+  if(C.run&&C.phase==='count'&&C.endAt+ANSWER<=now){C.phase='ask';C.askAt=C.endAt}
+  else if(C.run&&C.phase==='count'&&C.endAt<=now)ask();
+  if(C.run&&C.phase==='ask'&&C.askAt+ANSWER<=now)expire();
+  if(dkey(new Date())!==lastDay){lastDay=dkey(new Date());renderAll()}
+  render();
+}
+try{const w=new Worker(URL.createObjectURL(new Blob(['setInterval(()=>postMessage(0),500)'],{type:'text/javascript'})));w.onmessage=tick}catch(e){setInterval(tick,500)}
+document.addEventListener('visibilitychange',tick);
+
+/* ---------- installed app: service worker for notification buttons ---------- */
+if('serviceWorker' in navigator&&canNotify()&&/^https:|^http:\/\/(localhost|127\.0\.0\.1)/.test(location.href)){
+  navigator.serviceWorker.register('sw.js').then(()=>navigator.serviceWorker.ready).then(r=>{swReg=r;nUI()}).catch(()=>{});
+  navigator.serviceWorker.addEventListener('message',e=>{const d=e.data||{};if(d.type==='answer'&&d.choice!=='open')answer(d.choice,d.askAt,true)});
+}
+try{const q=new URLSearchParams(location.search);if(q.get('answer')){answer(q.get('answer'),q.get('askAt'),true);history.replaceState(null,'',location.pathname)}}catch(e){}
+
+/* ---------- account sync (claude.ai version) ---------- */
+(async()=>{
+  if(!window.claude||!claude.use){note('Saved in this browser.');return}
+  try{
+    const [db,user]=await Promise.all([claude.use('db'),claude.use('user')]);
+    const uid=user&&await user.id();
+    if(!db||!uid){note('Saved in this browser only — sign in to keep stars on your account.');return}
+    col=db.collection('data/users/'+uid);
+    const tm=setTimeout(()=>note('Your account is slow to answer — kept in this browser meanwhile.'),10000);
+    col.onSnapshot(async snap=>{
+      const remote=snap.docs.map(d=>d.data()).filter(v=>v&&v.id&&v.end),ids=new Set(remote.map(r=>r.id));
+      if(!synced&&!snap.metadata.fromCache){
+        synced=true;clearTimeout(tm);const missing=items.filter(s=>!ids.has(s.id));items=remote.concat(missing);
+        for(const s of missing){try{await col.doc(s.id).set(s)}catch(e){}}
+        note('Saved to your Claude account and synced across devices.');
+      }else if(synced)items=remote.map(r=>Object.assign({},r));
+      else items=remote.concat(items.filter(s=>!ids.has(s.id)));
+      saveI();renderAll();
+    },()=>{clearTimeout(tm);col=null;note('Account sync stopped — kept in this browser.')});
+  }catch(e){note('Saved in this browser.')}
+})();
+
+$('#bigp').setAttribute('d',starPath(100,106,94));
+nUI();tick();renderAll();
+}
+</script>
+</body>
+</html>
