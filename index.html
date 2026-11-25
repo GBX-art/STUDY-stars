@@ -124,6 +124,16 @@ td .del{min-height:36px;padding:0 12px;font-size:14px}td .del.sure{color:var(--r
 .pp{display:flex;gap:16px;align-items:center;margin:16px 0;flex-wrap:wrap}
 .filebtn{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--bg);cursor:pointer;font-weight:500;font-size:16px;margin:0}
 .filebtn:focus-within{outline:3px solid var(--vio);outline-offset:2px}.sr{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+.lb{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px}
+.lb li{display:grid;grid-template-columns:40px 44px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:16px}
+.lb li.you{border-color:var(--gold);background:var(--gold2)}
+.lb .av{width:44px;height:44px}
+.rk{font:600 18px/1 Outfit,sans-serif;font-variant-numeric:tabular-nums;width:36px;height:36px;display:grid;place-items:center;border-radius:50%}
+.rk.m1{background:var(--gold);color:#1d1503}.rk.m2{background:light-dark(#cfd3da,#7d8290);color:#15171c}.rk.m3{background:light-dark(#e2b48a,#a8714a);color:#1d1208}
+.lb .nm b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lb .nm small{color:var(--soft);font-size:13px}
+.lb .sc{text-align:right;white-space:nowrap}.lb .sc b{display:block;font:600 22px/1.1 Outfit,sans-serif;font-variant-numeric:tabular-nums}.lb .sc small{color:var(--soft);font-size:13px}
+.lb .gap{border:0;padding:0 14px;color:var(--soft);display:block}
+.lock{font-size:13px;color:var(--soft);white-space:nowrap}
 @media(max-width:760px){.timer,.buckets{grid-template-columns:minmax(0,1fr)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:6.5em;margin-inline-start:-7em;color:var(--soft)}.stack td:empty{display:none}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -145,7 +155,7 @@ td .del{min-height:36px;padding:0 12px;font-size:14px}td .del.sure{color:var(--r
         <div class="mins" style="margin-top:10px"><button id="minus" aria-label="5 minutes less">−5</button><input id="mins" type="number" min="1" max="240" inputmode="numeric" value="25"><span>min</span><button id="plus" aria-label="5 minutes more">+5</button></div>
       </div>
       <div id="cctl" hidden>
-        <p class="info">Every 10 minutes you'll be asked if you're still studying. Answer “still studying” and the 10 minutes go into your hours and the countdown starts again. If you don't answer within 10 minutes, the timer stops and that block doesn't count.</p>
+        <p class="info">Every 10 minutes you'll be asked if you're still studying. Answer “still studying” and the 10 minutes go into your hours and the countdown starts again. If you don't answer within 10 minutes, the timer stops and that block doesn't count. Need a break? Press Pause and carry on later.</p>
         <div class="row" style="margin-top:12px"><button id="nbtn" hidden>Turn on notifications</button><span id="nstat" class="sub"></span></div>
       </div>
       <div><label for="label">What are you studying? <span class="sub">(optional)</span></label><input id="label" list="labels" maxlength="60" placeholder="e.g. Chemistry revision"><datalist id="labels"></datalist></div>
@@ -165,6 +175,12 @@ td .del{min-height:36px;padding:0 12px;font-size:14px}td .del.sure{color:var(--r
       <div><b id="rN">0</b><span class="t">Red stars</span> <span class="sub">· each “gon kalakanniyek” answer</span>
         <p class="sub" id="rLast" style="margin:8px 0 0"></p></div></div>
   </div>
+</div></section>
+
+<section class="band"><div class="wrap">
+  <div class="top"><h2>Leaderboard</h2><div class="row" id="lbTabs"><button data-w="all">All time</button><button data-w="week">Last 7 days</button><button data-w="day">Last 24 hours</button></div></div>
+  <p class="sub" style="margin:0">Ranked by stars earned while signed in (1 star = 1 hour). Your level counts all your stars.</p>
+  <div id="lb"></div>
 </div></section>
 
 <section class="band"><div class="wrap">
@@ -228,7 +244,7 @@ const starPath=(cx,cy,r)=>{let p='';for(let i=0;i<10;i++){const a=-Math.PI/2+i*M
 const PRE=[15,25,45,60,90],CHECK=600e3,ANSWER=600e3,ICON='icon-192.png';
 let key='ss-stars',items=LS.get(key,[]).filter(s=>s&&s.id&&s.end);
 let T=Object.assign({dur:1500,left:1500,endAt:0,run:false,label:''},LS.get('ss-timer',{}));
-let C=Object.assign({run:false,phase:'idle',endAt:0,askAt:0},LS.get('ss-check',{}));
+let C=Object.assign({run:false,phase:'idle',endAt:0,askAt:0,paused:false,left:0},LS.get('ss-check',{}));
 let mode=LS.get('ss-mode','timer'),range=LS.get('ss-range',7);
 let col=null,synced=false,actx=null,swReg=null,lastDay=dkey(new Date()),fxQ=Promise.resolve();
 const hold={g:null,r:null};let flight=null;
@@ -273,8 +289,10 @@ function toggleTimer(){
 }
 
 /* ---------- 10-minute check-in ---------- */
-function startCheck(){unlock();Object.assign(C,{run:true,phase:'count',endAt:Date.now()+CHECK,askAt:0});saveC();$('#banner').classList.remove('on');render()}
-function stopCheck(msg){Object.assign(C,{run:false,phase:'idle',endAt:0,askAt:0});saveC();closeNotes('checkin');render();if(msg)banner(msg,true)}
+function startCheck(){unlock();Object.assign(C,{run:true,phase:'count',endAt:Date.now()+CHECK,askAt:0,paused:false,left:0});saveC();$('#banner').classList.remove('on');render()}
+function pauseCheck(){if(!C.run||C.phase!=='count'||C.paused)return;C.left=Math.max(1000,C.endAt-Date.now());C.paused=true;saveC();render()}
+function resumeCheck(){if(!C.paused)return;unlock();C.endAt=Date.now()+C.left;C.paused=false;C.left=0;saveC();render()}
+function stopCheck(msg){Object.assign(C,{run:false,phase:'idle',endAt:0,askAt:0,paused:false,left:0});saveC();closeNotes('checkin');render();if(msg)banner(msg,true)}
 function ask(){
   C.phase='ask';C.askAt=C.endAt;saveC();tone([880,660,880,660],.25);
   notify('Study check-in',{body:'Are you still studying? Or have you started being a gon kalakanniyek?',tag:'checkin',renotify:true,requireInteraction:true,icon:ICON,
@@ -333,7 +351,7 @@ function runFx(k,n){return new Promise(res=>{
 function render(){
   const now=Date.now(),busy=T.run||C.run;let l,frac,st,ask=false;
   for(const b of $('#tabs').children){b.setAttribute('aria-pressed',b.dataset.m===mode);b.disabled=busy&&b.dataset.m!==mode}
-  $('#tctl').hidden=mode!=='timer';$('#cctl').hidden=mode!=='check';$('#reset').hidden=mode!=='timer';
+  $('#tctl').hidden=mode!=='timer';$('#cctl').hidden=mode!=='check';$('#reset').hidden=mode==='check'&&!C.run;$('#reset').textContent=mode==='check'?'Stop':'Reset';
   const g=$('#go');
   if(mode==='timer'){
     l=leftNow();frac=l/T.dur;const paused=!T.run&&T.left<T.dur;
@@ -345,15 +363,16 @@ function render(){
     if(document.activeElement!==$('#mins'))$('#mins').value=m;
   }else{
     if(C.run&&C.phase==='ask'){l=(C.askAt+ANSWER-now)/1000;frac=l/(ANSWER/1000);st='Waiting for your answer';ask=true}
+    else if(C.run&&C.paused){l=C.left/1000;frac=l/(CHECK/1000);st='Paused — press Resume to carry on'}
     else if(C.run){l=(C.endAt-now)/1000;frac=l/(CHECK/1000);st='Studying — check-in at '+hm(new Date(C.endAt))}
     else{l=CHECK/1000;frac=1;st='Ready — asks every 10 minutes'}
-    g.textContent=C.run?'Stop':'Start check-in';g.className='big'+(C.run?' stop':'');
+    g.textContent=!C.run?'Start check-in':C.phase==='ask'?'Stop':C.paused?'Resume':'Pause';g.className='big'+(C.run&&!C.paused&&C.phase!=='ask'?' pause':C.phase==='ask'?' stop':'');
   }
   $('#time').textContent=clock(l);$('#state').textContent=st;$('#ring').classList.toggle('asking',ask);
   $('#prog').setAttribute('stroke-dashoffset',String(100*(1-Math.max(0,Math.min(1,frac)))));
   const showAsk=C.run&&C.phase==='ask'&&$('#fx').hidden;$('#ask').hidden=!showAsk;
   if(showAsk)$('#askT').textContent=`Answer within ${clock((C.askAt+ANSWER-now)/1000)}, or the timer stops and these 10 minutes won’t count.`;
-  document.title=ask?'Check-in! · Study Stars':busy?clock(l)+' · Study Stars':'Study Stars';
+  document.title=ask?'Check-in! · Study Stars':(mode==='check'&&C.paused)?'Paused · Study Stars':busy?clock(l)+' · Study Stars':'Study Stars';
 }
 function jarSvg(n,cls){let s='<rect class="rim" x="22" y="12" width="116" height="14" rx="7"/><path class="glass" d="M30 26h100q8 0 8 10v110q0 18-18 18H40q-18 0-18-18V36q0-10 8-10z"/>';
   const max=25;for(let i=0;i<Math.min(n,max);i++){const row=Math.floor(i/5),c=i%5,x=40+c*20+((i*37)%7-3),y=146-row*21+((i*53)%5-2);s+=`<path class="${cls}" d="${starPath(x,y,10)}"/>`}
@@ -398,14 +417,14 @@ function renderLog(){
   const rows=[...items].sort((a,b)=>b.end-a.end).slice(0,60);
   if(!rows.length){$('#log').innerHTML='<p class="sub">No sessions yet. Each finished session or confirmed check-in will be listed here.</p>';return}
   $('#log').innerHTML=`<table class="stack"><thead><tr><th>Date</th><th>Time</th><th>Length</th><th>Type</th><th>Subject</th><th></th></tr></thead><tbody>${rows.map(s=>{const e=new Date(s.end),r=s.kind==='r';
-    return `<tr><td>${esc(e.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short',year:'numeric'}))}</td><td class="nw">${r?hm(e):hm(new Date(s.start||s.end))+'–'+hm(e)}</td><td class="nw">${r?'—':s.min+' min'}</td><td>${r?'<span class="tag r">Red star</span>':`<span class="tag">${s.mode==='check'?'Check-in':'Timer'}</span>`}</td><td>${esc(s.label)||'<span class="sub">—</span>'}</td><td><button class="del" data-id="${esc(s.id)}">Remove</button></td></tr>`}).join('')}</tbody></table>`+(items.length>60?`<p class="note">Showing the latest 60 of ${items.length}.</p>`:'');
+    return `<tr><td>${esc(e.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short',year:'numeric'}))}</td><td class="nw">${r?hm(e):hm(new Date(s.start||s.end))+'–'+hm(e)}</td><td class="nw">${r?'—':s.min+' min'}</td><td>${r?'<span class="tag r">Red star</span>':`<span class="tag">${s.mode==='check'?'Check-in':'Timer'}</span>`}</td><td>${esc(s.label)||'<span class="sub">—</span>'}</td><td>${me&&s.src==='online'&&s.kind!=='r'?'<span class="lock">On leaderboard</span>':`<button class="del" data-id="${esc(s.id)}">Remove</button>`}</td></tr>`}).join('')}</tbody></table>`+(items.length>60?`<p class="note">Showing the latest 60 of ${items.length}.</p>`:'');
 }
-function renderAll(){renderStats();renderBuckets();draw();renderLog()}
+function renderAll(){renderStats();renderBuckets();draw();renderLog();if(typeof renderLb==='function')renderLb()}
 
 /* ---------- events ---------- */
 $('#tabs').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(!b||b.disabled)return;mode=b.dataset.m;LS.set('ss-mode',mode);$('#banner').classList.remove('on');render()});
-$('#go').addEventListener('click',()=>{if(mode==='timer')toggleTimer();else if(C.run)stopCheck('Check-in stopped. The unfinished 10 minutes were not counted.');else startCheck()});
-$('#reset').addEventListener('click',()=>{T.run=false;T.left=T.dur;T.endAt=0;saveT();render()});
+$('#go').addEventListener('click',()=>{if(mode==='timer')toggleTimer();else if(!C.run)startCheck();else if(C.phase==='ask')stopCheck('Check-in stopped. The unfinished 10 minutes were not counted.');else if(C.paused)resumeCheck();else pauseCheck()});
+$('#reset').addEventListener('click',()=>{if(mode==='check'){if(C.run)stopCheck('Check-in stopped. The unfinished 10 minutes were not counted.');return}T.run=false;T.left=T.dur;T.endAt=0;saveT();render()});
 $('#presets').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(b)setDur(+b.dataset.p)});
 $('#minus').addEventListener('click',()=>setDur(T.dur/60-5));
 $('#plus').addEventListener('click',()=>setDur(T.dur/60+5));
@@ -422,8 +441,8 @@ $('#log').addEventListener('click',e=>{const b=e.target.closest('.del');if(!b)re
 function tick(){
   const now=Date.now();
   if(T.run&&T.endAt<=now)completeTimer();
-  if(C.run&&C.phase==='count'&&C.endAt+ANSWER<=now){C.phase='ask';C.askAt=C.endAt}
-  else if(C.run&&C.phase==='count'&&C.endAt<=now)ask();
+  if(C.run&&C.phase==='count'&&!C.paused&&C.endAt+ANSWER<=now){C.phase='ask';C.askAt=C.endAt}
+  else if(C.run&&C.phase==='count'&&!C.paused&&C.endAt<=now)ask();
   if(C.run&&C.phase==='ask'&&C.askAt+ANSWER<=now)expire();
   if(dkey(new Date())!==lastDay){lastDay=dkey(new Date());renderAll()}
   render();
@@ -483,13 +502,34 @@ $('#pRm').addEventListener('click',()=>{newPhoto='';$('#pPic').innerHTML=avatar(
 $('#pSave').addEventListener('click',async()=>{const n=$('#pName').value.trim().slice(0,30);if(!n){$('#pErr').textContent='Your name can’t be empty.';return}
   $('#pSave').disabled=true;try{await SScloud.saveProfile(n,newPhoto);me.name=n;me.photo=newPhoto;renderAcct();closeM('#prof')}catch(e){$('#pErr').textContent='Couldn’t save ('+(e.code||e.message)+').'}$('#pSave').disabled=false});
 $('#pOut').addEventListener('click',async()=>{try{await SScloud.out()}catch(e){}closeM('#prof')});
+/* ---------- leaderboard ---------- */
+let lbData=null,lbWin=LS.get('ss-lbw','all');
+function lbVal(r,w){if(w==='all')return +r.min||0;const cut=Math.floor(Date.now()/36e5)-(w==='week'?168:24);let m=0;
+  for(const k in (r.hours||{}))if(+k>cut)m+=+r.hours[k]||0;return m}
+function renderLb(){const el=$('#lb');
+  for(const b of $('#lbTabs').children)b.setAttribute('aria-pressed',b.dataset.w===lbWin);
+  if(!cloudOK){el.innerHTML='<p class="sub" style="margin-top:14px">The leaderboard needs an internet connection.</p>';return}
+  if(!me){el.innerHTML='<div class="row" style="margin-top:14px"><span class="sub">Sign in to join the leaderboard and see where you rank.</span><button id="lbSign" type="button">Sign in</button></div>';return}
+  if(!lbData){el.innerHTML='<p class="sub" style="margin-top:14px">Loading the leaderboard…</p>';return}
+  const rows=lbData.map(r=>Object.assign({},r,{v:lbVal(r,lbWin)})).filter(r=>r.v>0||r.id===me.uid)
+    .sort((a,b)=>b.v-a.v||String(a.name).localeCompare(String(b.name)));
+  let rank=0,prev=null;rows.forEach((r,i)=>{if(r.v!==prev){rank=i+1;prev=r.v}r.rank=rank});
+  const top=rows.slice(0,50),mine=rows.find(r=>r.id===me.uid),extra=mine&&!top.includes(mine);
+  const row=r=>{const st=Math.floor(r.v/60),lv=levelOf(Math.floor(((+r.imp||0)+(+r.min||0))/60)),you=r.id===me.uid;
+    return `<li class="${you?'you':''}"><span class="rk${r.rank<=3&&r.v>0?' m'+r.rank:''}">${r.rank}</span>${avatar(r.photo,r.name,'av')}<span class="nm"><b>${esc(r.name)}${you?' · You':''}</b><small>${esc(lv.name)}</small></span><span class="sc"><b>${st}★</b><small>${fmtM(r.v)}</small></span></li>`};
+  el.innerHTML=rows.length?`<ol class="lb">${top.map(row).join('')}${extra?'<li class="gap">⋯</li>'+row(mine):''}</ol>`
+    :'<p class="sub" style="margin-top:14px">No one has studied in this period yet. Be the first!</p>';
+}
+$('#lbTabs').addEventListener('click',e=>{const b=e.target.closest('[data-w]');if(!b)return;lbWin=b.dataset.w;LS.set('ss-lbw',lbWin);renderLb()});
+$('#lb').addEventListener('click',e=>{if(e.target.closest('#lbSign')){setMode(false);openM('#auth')}});
 window.SS={store,banner,note,
+  board(list){lbData=list;renderLb()},
   offline:()=>LS.get('ss-stars',[]).filter(s=>s&&s.id&&s.end),
   clearOffline(){LS.set('ss-stars',[])},
   ready(){cloudOK=true;renderAcct()},
   failed(){cloudOK=false;renderAcct();note('Online features couldn’t load, so you’re offline. Stars are saved on this laptop.')},
   signedIn(u){me=u;key='ss-acct-'+u.uid;items=LS.get(key,[]);renderAll();note('Signed in as '+u.name+'. Your stars sync to your account.')},
-  signedOut(){me=null;store.push=store.del=null;key='ss-stars';items=LS.get(key,[]).filter(s=>s&&s.id&&s.end);renderAll();note('Not signed in. Stars are saved on this laptop only — sign in to keep them in your account.')},
+  signedOut(){me=null;lbData=null;store.push=store.del=null;key='ss-stars';items=LS.get(key,[]).filter(s=>s&&s.id&&s.end);renderAll();note('Not signed in. Stars are saved on this laptop only — sign in to keep them in your account.')},
   setItems(a){items=a;saveI();renderAll()}};
 
 $('#bigp').setAttribute('d',starPath(100,106,94));

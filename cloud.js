@@ -22,7 +22,7 @@ let db;
 try { db = F.initializeFirestore(app, { localCache: F.persistentLocalCache({ tabManager: F.persistentMultipleTabManager() }) }); }
 catch (e) { db = F.getFirestore(app); }
 
-let unsub = null, pendingName = '';
+let unsubs = [], pendingName = '', myBoard = null, bref = null;
 
 // Shape a session/red star exactly the way the security rules expect.
 function clean(x, src) {
@@ -68,24 +68,69 @@ window.SScloud = {
   },
   reset: e => A.sendPasswordResetEmail(auth, e),
   out: () => A.signOut(auth),
-  saveProfile: (name, photo) => F.setDoc(F.doc(db, 'users', auth.currentUser.uid), { name, photo }, { merge: true })
+  saveProfile: async (name, photo) => {
+    const uid = auth.currentUser.uid, b = F.writeBatch(db);
+    b.set(F.doc(db, 'users', uid), { name, photo }, { merge: true });
+    if (myBoard) b.update(F.doc(db, 'board', uid), { name, photo: photo.length <= 60000 ? photo : '' });
+    return b.commit();
+  }
 };
+
+// Leaderboard entry for this user. `imp` = stars from before joining (count for level only).
+async function ensureBoard(uid, prof, docs) {
+  const s = await F.getDoc(bref);
+  if (s.exists()) return;
+  const imp = Math.round(docs.filter(x => x.kind !== 'r').reduce((a, x) => a + (+x.min || 0), 0));
+  await F.setDoc(bref, { name: prof.name, photo: (prof.photo || '').length <= 60000 ? (prof.photo || '') : '',
+    min: 0, hours: {}, imp, lastEnd: Date.now(), last: '' });
+}
+let pruned = false;
+function pruneHours() {
+  if (pruned || !myBoard || !myBoard.hours) return;
+  const cut = Math.floor(Date.now() / 3600000) - 200, keep = {};
+  let drop = false;
+  for (const k in myBoard.hours) { if (+k >= cut) keep[k] = myBoard.hours[k]; else drop = true; }
+  pruned = true;
+  if (drop) F.updateDoc(bref, { hours: keep }).catch(() => {});
+}
 SS.ready();
 
 A.onAuthStateChanged(auth, async u => {
-  if (unsub) { unsub(); unsub = null; }
+  unsubs.forEach(f => f()); unsubs = []; myBoard = null; pruned = false;
   if (!u) { SS.signedOut(); return; }
+  bref = F.doc(db, 'board', u.uid);
   try {
     const { data, fresh } = await ensureUser(u);
     pendingName = '';
-    SS.store.push = x => F.setDoc(sref(u.uid, x.id), clean(x, 'online'))
-      .catch(e => SS.note('Couldn’t save that to your account (' + e.code + '). Check your internet.'));
+    SS.store.push = async x => {
+      const c = clean(x, 'online'), r = sref(u.uid, x.id);
+      // Count it on the leaderboard in the same write, if it doesn't overlap the last counted session.
+      if (c.kind === 's' && myBoard && c.start >= myBoard.lastEnd) {
+        const k = String(Math.floor(c.end / 3600000)), b = F.writeBatch(db);
+        b.set(r, c);
+        b.update(bref, new F.FieldPath('hours', k), ((myBoard.hours || {})[k] || 0) + c.min,
+          'min', (myBoard.min || 0) + c.min, 'lastEnd', c.end, 'last', c.id);
+        try { await b.commit(); return; } catch (e) { /* fall back to saving the session alone */ }
+      }
+      try { await F.setDoc(r, c); }
+      catch (e) { SS.note('Couldn’t save that to your account (' + e.code + '). Check your internet.'); }
+    };
     SS.store.del = id => F.deleteDoc(sref(u.uid, id)).catch(() => {});
     SS.signedIn({ uid: u.uid, name: data.name, photo: data.photo || '', email: u.email || '' });
     if (fresh) SS.banner(`Welcome! ${fresh} offline session${fresh > 1 ? 's were' : ' was'} added to your account.`);
-    unsub = F.onSnapshot(F.collection(db, 'users', u.uid, 'sessions'),
-      s => SS.setItems(s.docs.map(d => d.data())),
-      e => SS.note('Sync stopped (' + e.code + '). Reload the app to try again.'));
+    let boardChecked = false;
+    unsubs.push(F.onSnapshot(F.collection(db, 'users', u.uid, 'sessions'), s => {
+      const docs = s.docs.map(d => d.data());
+      SS.setItems(docs);
+      if (!boardChecked && !s.metadata.fromCache) {
+        boardChecked = true;
+        ensureBoard(u.uid, data, docs).catch(e => SS.note('Couldn’t join the leaderboard (' + (e.code || e.message) + ').'));
+      }
+    }, e => SS.note('Sync stopped (' + e.code + '). Reload the app to try again.')));
+    unsubs.push(F.onSnapshot(bref, s => { myBoard = s.exists() ? s.data() : null; pruneHours(); }, () => {}));
+    unsubs.push(F.onSnapshot(F.query(F.collection(db, 'board'), F.limit(500)),
+      s => SS.board(s.docs.map(d => Object.assign({ id: d.id }, d.data()))),
+      e => SS.note('Leaderboard couldn’t load (' + e.code + ').')));
   } catch (e) {
     SS.note('Signed in, but your account couldn’t load (' + (e.code || e.message) + '). Check your internet and reload.');
   }
