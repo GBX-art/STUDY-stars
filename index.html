@@ -511,14 +511,14 @@ function renderLb(){const el=$('#lb');
   if(!cloudOK){el.innerHTML='<p class="sub" style="margin-top:14px">The leaderboard needs an internet connection.</p>';return}
   if(!me){el.innerHTML='<div class="row" style="margin-top:14px"><span class="sub">Sign in to join the leaderboard and see where you rank.</span><button id="lbSign" type="button">Sign in</button></div>';return}
   if(!lbData){el.innerHTML='<p class="sub" style="margin-top:14px">Loading the leaderboard…</p>';return}
-  const rows=lbData.map(r=>Object.assign({},r,{v:lbVal(r,lbWin)})).filter(r=>r.v>0||r.id===me.uid)
+  const rows=lbData.map(r=>Object.assign({},r,{v:lbVal(r,lbWin)}))
     .sort((a,b)=>b.v-a.v||String(a.name).localeCompare(String(b.name)));
   let rank=0,prev=null;rows.forEach((r,i)=>{if(r.v!==prev){rank=i+1;prev=r.v}r.rank=rank});
   const top=rows.slice(0,50),mine=rows.find(r=>r.id===me.uid),extra=mine&&!top.includes(mine);
   const row=r=>{const st=Math.floor(r.v/60),lv=levelOf(Math.floor(((+r.imp||0)+(+r.min||0))/60)),you=r.id===me.uid;
     return `<li class="${you?'you':''}"><span class="rk${r.rank<=3&&r.v>0?' m'+r.rank:''}">${r.rank}</span>${avatar(r.photo,r.name,'av')}<span class="nm"><b>${esc(r.name)}${you?' · You':''}</b><small>${esc(lv.name)}</small></span><span class="sc"><b>${st}★</b><small>${fmtM(r.v)}</small></span></li>`};
   el.innerHTML=rows.length?`<ol class="lb">${top.map(row).join('')}${extra?'<li class="gap">⋯</li>'+row(mine):''}</ol>`
-    :'<p class="sub" style="margin-top:14px">No one has studied in this period yet. Be the first!</p>';
+    :'<p class="sub" style="margin-top:14px">No players yet.</p>';
 }
 $('#lbTabs').addEventListener('click',e=>{const b=e.target.closest('[data-w]');if(!b)return;lbWin=b.dataset.w;LS.set('ss-lbw',lbWin);renderLb()});
 $('#lb').addEventListener('click',e=>{if(e.target.closest('#lbSign')){setMode(false);openM('#auth')}});

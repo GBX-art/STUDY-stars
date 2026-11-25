@@ -105,12 +105,15 @@ A.onAuthStateChanged(auth, async u => {
     SS.store.push = async x => {
       const c = clean(x, 'online'), r = sref(u.uid, x.id);
       // Count it on the leaderboard in the same write, if it doesn't overlap the last counted session.
+      if (c.kind === 's' && !myBoard) SS.note('That session was saved, but your leaderboard entry wasn’t ready, so it wasn’t counted. Reload the app.');
+      else if (c.kind === 's' && c.start < myBoard.lastEnd) SS.note('That session overlapped one already counted, so it wasn’t added to the leaderboard.');
       if (c.kind === 's' && myBoard && c.start >= myBoard.lastEnd) {
         const k = String(Math.floor(c.end / 3600000)), b = F.writeBatch(db);
         b.set(r, c);
         b.update(bref, new F.FieldPath('hours', k), ((myBoard.hours || {})[k] || 0) + c.min,
           'min', (myBoard.min || 0) + c.min, 'lastEnd', c.end, 'last', c.id);
-        try { await b.commit(); return; } catch (e) { /* fall back to saving the session alone */ }
+        try { await b.commit(); return; }
+        catch (e) { SS.note('That session was saved, but it couldn’t be counted on the leaderboard (' + (e.code || e.message) + ').'); }
       }
       try { await F.setDoc(r, c); }
       catch (e) { SS.note('Couldn’t save that to your account (' + e.code + '). Check your internet.'); }
