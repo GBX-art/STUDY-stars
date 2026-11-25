@@ -104,16 +104,21 @@ A.onAuthStateChanged(auth, async u => {
     pendingName = '';
     SS.store.push = async x => {
       const c = clean(x, 'online'), r = sref(u.uid, x.id);
-      // Count it on the leaderboard in the same write, if it doesn't overlap the last counted session.
-      if (c.kind === 's' && !myBoard) SS.note('That session was saved, but your leaderboard entry wasn’t ready, so it wasn’t counted. Reload the app.');
-      else if (c.kind === 's' && c.start < myBoard.lastEnd) SS.note('That session overlapped one already counted, so it wasn’t added to the leaderboard.');
-      if (c.kind === 's' && myBoard && c.start >= myBoard.lastEnd) {
-        const k = String(Math.floor(c.end / 3600000)), b = F.writeBatch(db);
-        b.set(r, c);
-        b.update(bref, new F.FieldPath('hours', k), ((myBoard.hours || {})[k] || 0) + c.min,
-          'min', (myBoard.min || 0) + c.min, 'lastEnd', c.end, 'last', c.id);
-        try { await b.commit(); return; }
-        catch (e) { SS.note('That session was saved, but it couldn’t be counted on the leaderboard (' + (e.code || e.message) + ').'); }
+      if (c.kind === 's') {
+        if (!myBoard) SS.lb('Saved, but your leaderboard entry wasn’t ready, so this session wasn’t counted. Reload the app.', 0);
+        else {
+          // Minutes not already counted (a session that overlaps the last counted one adds only its new part).
+          const add = c.start >= myBoard.lastEnd ? c.min : Math.floor((c.end - myBoard.lastEnd) / 60000);
+          if (add <= 0) SS.lb('Saved, but this time was already counted on the leaderboard.', 0);
+          else {
+            const k = String(Math.floor(c.end / 3600000)), b = F.writeBatch(db);
+            b.set(r, c);
+            b.update(bref, new F.FieldPath('hours', k), ((myBoard.hours || {})[k] || 0) + add,
+              'min', (myBoard.min || 0) + add, 'lastEnd', c.end, 'last', c.id);
+            try { await b.commit(); SS.lb(`+${add} min added to the leaderboard.`, 1); return; }
+            catch (e) { SS.lb('Saved, but it couldn’t be counted on the leaderboard (' + (e.code || e.message) + '). Please send Claude a screenshot of this.', 0); }
+          }
+        }
       }
       try { await F.setDoc(r, c); }
       catch (e) { SS.note('Couldn’t save that to your account (' + e.code + '). Check your internet.'); }
@@ -125,9 +130,9 @@ A.onAuthStateChanged(auth, async u => {
     unsubs.push(F.onSnapshot(F.collection(db, 'users', u.uid, 'sessions'), s => {
       const docs = s.docs.map(d => d.data());
       SS.setItems(docs);
-      if (!boardChecked && !s.metadata.fromCache) {
+      if (!boardChecked) {
         boardChecked = true;
-        ensureBoard(u.uid, data, docs).catch(e => SS.note('Couldn’t join the leaderboard (' + (e.code || e.message) + ').'));
+        ensureBoard(u.uid, data, docs).catch(e => { boardChecked = false; SS.lb('Couldn’t join the leaderboard (' + (e.code || e.message) + ').', 0); });
       }
     }, e => SS.note('Sync stopped (' + e.code + '). Reload the app to try again.')));
     unsubs.push(F.onSnapshot(bref, s => { myBoard = s.exists() ? s.data() : null; pruneHours(); }, () => {}));

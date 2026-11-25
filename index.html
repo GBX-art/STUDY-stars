@@ -133,6 +133,7 @@ td .del{min-height:36px;padding:0 12px;font-size:14px}td .del.sure{color:var(--r
 .lb .nm b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lb .nm small{color:var(--soft);font-size:13px}
 .lb .sc{text-align:right;white-space:nowrap}.lb .sc b{display:block;font:600 22px/1.1 Outfit,sans-serif;font-variant-numeric:tabular-nums}.lb .sc small{color:var(--soft);font-size:13px}
 .lb .gap{border:0;padding:0 14px;color:var(--soft);display:block}
+.lbn{margin:12px 0 0;padding:10px 14px;border-radius:12px;background:var(--vio2);font-size:14px}.lbn.bad{background:var(--red2);color:var(--red)}
 .lock{font-size:13px;color:var(--soft);white-space:nowrap}
 @media(max-width:760px){.timer,.buckets{grid-template-columns:minmax(0,1fr)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:6.5em;margin-inline-start:-7em;color:var(--soft)}.stack td:empty{display:none}}
@@ -180,6 +181,7 @@ td .del{min-height:36px;padding:0 12px;font-size:14px}td .del.sure{color:var(--r
 <section class="band"><div class="wrap">
   <div class="top"><h2>Leaderboard</h2><div class="row" id="lbTabs"><button data-w="all">All time</button><button data-w="week">Last 7 days</button><button data-w="day">Last 24 hours</button></div></div>
   <p class="sub" style="margin:0">Ranked by stars earned while signed in (1 star = 1 hour). Your level counts all your stars.</p>
+  <p class="lbn" id="lbNote" hidden></p>
   <div id="lb"></div>
 </div></section>
 
@@ -524,12 +526,13 @@ $('#lbTabs').addEventListener('click',e=>{const b=e.target.closest('[data-w]');i
 $('#lb').addEventListener('click',e=>{if(e.target.closest('#lbSign')){setMode(false);openM('#auth')}});
 window.SS={store,banner,note,
   board(list){lbData=list;renderLb()},
+  lb(t,ok){const n=$('#lbNote');n.hidden=false;n.textContent=t;n.className='lbn'+(ok?'':' bad')},
   offline:()=>LS.get('ss-stars',[]).filter(s=>s&&s.id&&s.end),
   clearOffline(){LS.set('ss-stars',[])},
   ready(){cloudOK=true;renderAcct()},
   failed(){cloudOK=false;renderAcct();note('Online features couldn’t load, so you’re offline. Stars are saved on this laptop.')},
   signedIn(u){me=u;key='ss-acct-'+u.uid;items=LS.get(key,[]);renderAll();note('Signed in as '+u.name+'. Your stars sync to your account.')},
-  signedOut(){me=null;lbData=null;store.push=store.del=null;key='ss-stars';items=LS.get(key,[]).filter(s=>s&&s.id&&s.end);renderAll();note('Not signed in. Stars are saved on this laptop only — sign in to keep them in your account.')},
+  signedOut(){me=null;lbData=null;$('#lbNote').hidden=true;store.push=store.del=null;key='ss-stars';items=LS.get(key,[]).filter(s=>s&&s.id&&s.end);renderAll();note('Not signed in. Stars are saved on this laptop only — sign in to keep them in your account.')},
   setItems(a){items=a;saveI();renderAll()}};
 
 $('#bigp').setAttribute('d',starPath(100,106,94));
