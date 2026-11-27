@@ -135,21 +135,40 @@ td .del{min-height:36px;padding:0 12px;font-size:14px}td .del.sure{color:var(--r
 .lb .gap{border:0;padding:0 14px;color:var(--soft);display:block}
 .lbn{margin:12px 0 0;padding:10px 14px;border-radius:12px;background:var(--vio2);font-size:14px}.lbn.bad{background:var(--red2);color:var(--red)}
 .aca{display:inline-flex;align-items:center;gap:8px;font:600 20px Outfit,sans-serif;padding:6px 14px;border-radius:24px;background:var(--gold2)}.aca svg{width:22px;height:22px}
-.kwrap{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;margin-top:16px;align-items:start}
-.kmapbox{background:light-dark(#bfe3f2,#173a52);border-radius:22px;padding:10px 10px 4px;position:relative}
+.khome{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;margin-top:16px}
+.kprev{position:relative;display:block;width:100%;padding:8px;border:0;border-radius:22px;background:linear-gradient(180deg,light-dark(#8fdcff,#16466b),light-dark(#c9efff,#0f2f4a));cursor:pointer;min-height:0}
+.kprev:hover{filter:brightness(1.04)}.kprev .kmap{width:100%;height:auto;display:block}
+.kgo{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);background:var(--gold);color:#1d1503;font:600 18px Outfit,sans-serif;padding:12px 26px;border-radius:30px;box-shadow:0 6px 20px rgba(0,0,0,.25);white-space:nowrap}
+.bankc{display:flex;gap:14px;align-items:center;border-radius:22px;padding:18px;background:linear-gradient(160deg,light-dark(#fff3cf,#3b2f17),light-dark(#ffe08a,#4a3712))}
+.bankc h3{margin:0;font:600 24px Outfit,sans-serif}.bankc p{margin:6px 0}.bk2{font-size:15px}
+.bki{width:96px;height:104px;flex:none}
+.kmeta,.kmeta2{margin:6px 6px 4px;font-size:13px;color:var(--soft)}.kmeta{color:light-dark(#1f4b63,#bcd9ea)}
 .kmap{width:100%;height:auto;display:block;touch-action:manipulation}
-.kmapbox.placing .kt polygon{cursor:crosshair}.kb g{cursor:pointer}.kb g.sel{filter:drop-shadow(0 0 6px #ffd447)}
-.kmeta{margin:4px 6px 6px;font-size:13px;color:light-dark(#1f4b63,#bcd9ea)}
-.kside{display:grid;gap:12px}
+.kfs{position:fixed;inset:0;z-index:40;display:grid;grid-template-rows:auto minmax(0,1fr);background:var(--bg)}
+.kfs[hidden]{display:none}
+.kbar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding:10px max(2vw,12px);border-bottom:1px solid var(--line);background:var(--bg)}
+.kbar>b{font:600 20px Outfit,sans-serif;flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kbtns{display:flex;gap:6px;flex-wrap:wrap}
+.kbody{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,360px);min-height:0}
+.kview{overflow:auto;background:linear-gradient(180deg,light-dark(#8fdcff,#16466b),light-dark(#c9efff,#0f2f4a));padding:10px;display:grid;place-items:center}
+#kmap{max-width:none}.kview #kmap{min-width:100%}
+#kmap.placing .kt polygon{cursor:crosshair}.kb g{cursor:pointer}.kb g.sel{filter:drop-shadow(0 0 6px #ffd447)}
+.kpanel{overflow:auto;padding:14px;display:grid;gap:12px;align-content:start;border-left:1px solid var(--line)}
+.kh{margin:6px 0 0;font:600 18px Outfit,sans-serif}.kfoot{margin:0}
 .kcard{display:grid;gap:10px;border:1px solid var(--line);border-radius:18px;padding:14px 16px;background:var(--panel)}
-.kcard.tre{display:flex;flex-wrap:wrap;gap:10px 16px;justify-content:space-between;align-items:center;background:var(--gold2);border-color:transparent}.kcard.tre b{display:block;font:600 22px/1.2 Outfit,sans-serif;white-space:nowrap}.kcard.tre>span{flex:1 1 100%}
+button.kcard.tre{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--gold2);border-color:transparent;text-align:left;min-height:56px;width:100%}
+.kcard.tre b{display:block;font:600 18px/1.2 Outfit,sans-serif}
 .kcard.sel{grid-template-columns:64px minmax(0,1fr)}.kcard.sel>button,.kcard.sel>.row,.kcard.sel>span{grid-column:1/-1}.kcard.sel b{display:block}
 .kcard .big{min-height:48px;font-size:16px;padding:0 18px}
 button.sure{border-color:var(--red);color:var(--red)}
-.kshop{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr));gap:8px}
+.kshop{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,140px),1fr));gap:8px}
 .kitem{display:flex;gap:8px;align-items:center;text-align:left;padding:6px 10px 6px 4px;min-height:64px;border-radius:14px}
+.kitem.on{border-color:var(--gold);background:var(--gold2)}
 .kitem b{display:block;font-size:14px;line-height:1.2}.kitem small{color:var(--soft);font-size:12px}.kitem.lk{opacity:.5}
 .ki{width:46px;height:64px;flex:none}.kcard.sel .ki{width:64px;height:88px}
+.bkstats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:4px 0 16px}
+.bkstats div{background:var(--panel);border-radius:14px;padding:10px 12px}.bkstats small{color:var(--soft);font-size:13px;display:block}.bkstats b{font:600 24px Outfit,sans-serif}
+.bkx{display:grid;gap:12px;margin-bottom:14px}.bkn{font-size:18px;min-width:150px;text-align:center}.bkx .big{width:100%}
+@media(max-width:860px){.khome{grid-template-columns:minmax(0,1fr)}.kbody{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,42vh)}.kpanel{border-left:0;border-top:1px solid var(--line)}}
 .lb li.vis{cursor:pointer}.lb li.vis:hover{border-color:var(--vio)}.lb li.vis:focus-visible{outline:3px solid var(--vio)}
 .card.wide{max-width:900px}
 @media(max-width:860px){.kwrap{grid-template-columns:minmax(0,1fr)}}
@@ -206,8 +225,8 @@ button.sure{border-color:var(--red);color:var(--red)}
 
 <section class="band"><div class="wrap">
   <div class="top"><h2>Your kingdom</h2><span class="aca" id="aca"></span></div>
-  <p class="sub" style="margin:0">Turn your study stars into Aca coins (1★ = 10 Aca) and build your kingdom. Higher study levels unlock better buildings and upgrades. Friends can visit from the leaderboard.</p>
-  <div id="kg"></div>
+  <p class="sub" style="margin:0">Exchange your study stars for Aca coins at the bank, then open your kingdom to build your village. Higher study levels unlock better buildings and upgrades.</p>
+  <div id="kgHome"></div>
 </div></section>
 
 <section class="band"><div class="wrap">
@@ -253,6 +272,18 @@ button.sure{border-color:var(--red);color:var(--red)}
 <div class="ask" id="visit" hidden><div class="card wide" role="dialog" aria-labelledby="visH">
   <div class="mh"><h2 id="visH">Kingdom</h2><button class="x" data-close="#visit" aria-label="Close">✕</button></div>
   <div class="kmapbox" id="visMap"></div>
+</div></div>
+
+<div class="kfs" id="kfs" hidden role="dialog" aria-label="Your kingdom">
+  <header class="kbar"><button id="kBack" type="button">← Back</button><b id="kTitle">Your kingdom</b><span class="aca" id="aca2"></span>
+    <span class="kbtns"><button id="kBankBtn" type="button">Bank</button><button id="kZoomOut" type="button" aria-label="Zoom out">−</button><button id="kZoomIn" type="button" aria-label="Zoom in">+</button><button id="kFull" type="button">Full screen</button></span></header>
+  <div class="kbody"><div class="kview" id="kview"></div><aside class="kpanel" id="kpanel"></aside></div>
+</div>
+
+<div class="ask" id="bankM" hidden><div class="card" role="dialog" aria-labelledby="bankH">
+  <div class="mh"><h2 id="bankH">Bank</h2><button class="x" data-close="#bankM" aria-label="Close">✕</button></div>
+  <p class="small">Exchange your study stars for Aca coins. 1★ = 10 Aca.</p>
+  <div id="bankBody"></div>
 </div></div>
 
 <div class="fx" id="fx" hidden><div class="bg"></div><div class="rays"></div><div id="sp"></div>
@@ -502,8 +533,8 @@ function renderAcct(){const a=$('#acct');
   a.innerHTML=`<button class="me" id="meBtn" type="button" aria-label="Your profile">${avatar(me.photo,me.name,'av')}<span><b>${esc(me.name)}</b><small>${esc(levelOf(myStars()).name)}</small></span></button>`}
 const openM=s=>{$(s).hidden=false;const f=$(s).querySelector('input:not(.sr),button.gbtn');if(f)f.focus()},closeM=s=>{$(s).hidden=true};
 document.addEventListener('click',e=>{const c=e.target.closest('[data-close]');if(c)closeM(c.dataset.close);
-  if(e.target.id==='auth'||e.target.id==='prof'||e.target.id==='visit')closeM('#'+e.target.id)});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeM('#auth');closeM('#prof');closeM('#visit')}});
+  if(e.target.id==='auth'||e.target.id==='prof'||e.target.id==='visit'||e.target.id==='bankM')closeM('#'+e.target.id)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){const o=['#auth','#prof','#visit','#bankM'].filter(s=>!$(s).hidden);o.forEach(closeM);if(o.length)e.stopImmediatePropagation()}});
 $('#acct').addEventListener('click',e=>{if(e.target.closest('#signin')){setMode(false);openM('#auth')}else if(e.target.closest('#meBtn'))openProfile()});
 function setMode(s){signup=s;$('#nmRow').hidden=!s;$('#authGo').textContent=s?'Create account':'Sign in';
   $('#authSw').textContent=s?'Have an account? Sign in':'New here? Create an account';$('#authH').textContent=s?'Create your account':'Sign in to Study Stars';
@@ -558,94 +589,116 @@ $('#lb').addEventListener('click',e=>{if(e.target.closest('#lbSign')){setMode(fa
 const KB={"fence": {"n": ["Wooden Fence", "Stone Wall", "Iron Wall"], "c": [5, 15, 40], "s": [0, 5, 30]}, "tree": {"n": ["Tree", "Big Tree", "Cherry Blossom"], "c": [5, 15, 40], "s": [0, 5, 30]}, "well": {"n": ["Well", "Stone Well", "Fountain"], "c": [15, 45, 120], "s": [0, 15, 60]}, "house": {"n": ["Hut", "Stone House", "Manor"], "c": [20, 60, 150], "s": [0, 15, 60]}, "farm": {"n": ["Farm", "Big Farm", "Orchard"], "c": [25, 70, 160], "s": [0, 15, 60]}, "tower": {"n": ["Watchtower", "Stone Tower", "Wizard Tower"], "c": [40, 100, 250], "s": [5, 30, 100]}, "library": {"n": ["Library", "Grand Library", "University"], "c": [80, 200, 500], "s": [15, 60, 175]}, "statue": {"n": ["Star Statue", "Golden Statue", "Monument of Madness"], "c": [100, 300, 1000], "s": [30, 100, 600]}, "castle": {"n": ["Keep", "Castle", "Royal Palace"], "c": [300, 700, 1500], "s": [60, 175, 400]}};
 const KORDER=['fence','tree','well','house','farm','tower','library','statue','castle'];
 const KN=12,TW=64,TH=32,OX=KN*TW/2,OY=96,KD=18;
-let kd=null,kSel=null,kPlace=null,kHover=null,kBusy=false;
+let kd=null,kSel=null,kPlace=null,kHover=null,kBusy=false,kOpen=false,kZoom=LS.get('ss-kz',1),bankN=1;
 function myStars(){const b=me&&lbData&&lbData.find(r=>r.id===me.uid);return b?Math.floor(((+b.imp||0)+(+b.min||0))/60):goldN()}
-const coin=()=>'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#e0a400" stroke="#9b6a00" stroke-width="1.5"/><circle cx="12" cy="12" r="6.5" fill="none" stroke="#fff3cf" stroke-width="1.5"/><text x="12" y="16" text-anchor="middle" font-size="9" font-weight="700" fill="#5a3d00" font-family="Inter,sans-serif">A</text></svg>';
+const kReady=()=>kd?Math.max(0,myStars()-(+kd.conv||0)):0;
+const coin=()=>'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#ffc400" stroke="#b07800" stroke-width="1.5"/><circle cx="12" cy="12" r="6.5" fill="none" stroke="#fff3cf" stroke-width="1.5"/><text x="12" y="16" text-anchor="middle" font-size="9" font-weight="700" fill="#6b4500" font-family="Inter,sans-serif">A</text></svg>';
 const tc=(x,y)=>[OX+(x-y)*TW/2,OY+(x+y)*TH/2+TH/2];
 const P=a=>a.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
 function shade(hex,f){const n=parseInt(hex.slice(1),16),c=v=>Math.max(0,Math.min(255,Math.round(v*f)));
   return '#'+((1<<24)|(c(n>>16)<<16)|(c(n>>8&255)<<8)|c(n&255)).toString(16).slice(1)}
 function prism(cx,cy,s,h,c,z=0){const a=TW/2*s,b=TH/2*s,y=cy-z,L=[cx-a,y],B=[cx,y+b],R=[cx+a,y],T=[cx,y-b],u=p=>[p[0],p[1]-h];
-  return `<polygon points="${P([L,B,u(B),u(L)])}" fill="${shade(c,.8)}"/><polygon points="${P([B,R,u(R),u(B)])}" fill="${shade(c,.64)}"/><polygon points="${P([u(L),u(B),u(R),u(T)])}" fill="${c}"/>`}
+  return `<polygon points="${P([L,B,u(B),u(L)])}" fill="${shade(c,.84)}"/><polygon points="${P([B,R,u(R),u(B)])}" fill="${shade(c,.68)}"/><polygon points="${P([u(L),u(B),u(R),u(T)])}" fill="${c}"/>`}
 function roof(cx,cy,s,z,hr,c){const a=TW/2*s,b=TH/2*s,y=cy-z;
-  return `<polygon points="${P([[cx-a,y],[cx,y+b],[cx,y-hr]])}" fill="${shade(c,.92)}"/><polygon points="${P([[cx,y+b],[cx+a,y],[cx,y-hr]])}" fill="${shade(c,.7)}"/>`}
+  return `<polygon points="${P([[cx-a,y],[cx,y+b],[cx,y-hr]])}" fill="${c}"/><polygon points="${P([[cx,y+b],[cx+a,y],[cx,y-hr]])}" fill="${shade(c,.76)}"/>`}
 const dia=(cx,cy,s,z,c)=>{const a=TW/2*s,b=TH/2*s,y=cy-z;return `<polygon points="${P([[cx-a,y],[cx,y+b],[cx+a,y],[cx,y-b]])}" fill="${c}"/>`};
 const off=(cx,cy,u,v)=>[cx+(u-v)*TW/2,cy+(u+v)*TH/2];
-const shadow=(cx,cy,r=.34)=>`<ellipse cx="${cx}" cy="${cy+2}" rx="${TW*r}" ry="${TH*r*.9}" fill="#000" opacity=".16"/>`;
-function treeAt(x,y,r,g,h=10){return prism(x,y,.09,h,'#7a4b28')+`<circle cx="${x-r*.5}" cy="${y-h-1}" r="${r*.8}" fill="${shade(g,.8)}"/><circle cx="${x+r*.5}" cy="${y-h-1}" r="${r*.8}" fill="${shade(g,.68)}"/><circle cx="${x}" cy="${y-h-r*.6}" r="${r}" fill="${g}"/>`}
+const shadow=(cx,cy,r=.34)=>`<ellipse cx="${cx}" cy="${cy+2}" rx="${TW*r}" ry="${TH*r*.9}" fill="#1b4d12" opacity=".22"/>`;
+function treeAt(x,y,r,g,h=10){return prism(x,y,.09,h,'#8b5a2b')+`<circle cx="${x-r*.5}" cy="${y-h-1}" r="${r*.8}" fill="${shade(g,.85)}"/><circle cx="${x+r*.5}" cy="${y-h-1}" r="${r*.8}" fill="${shade(g,.72)}"/><circle cx="${x}" cy="${y-h-r*.6}" r="${r}" fill="${g}"/><circle cx="${x-r*.35}" cy="${y-h-r*.95}" r="${r*.3}" fill="#fff" opacity=".25"/>`}
 function sprite(k,t,cx,cy){let s='';
   switch(k){
-  case 'fence':{const c=['#a0703c','#9aa0a8','#5d6673'][t],h=6+3*t;
-    s+=prism(cx,cy,.92,h,c)+dia(cx,cy,.7,h,'#86c75f');
-    for(const [u,v] of [[-.46,-.46],[-.46,.46],[.46,-.46],[.46,.46]]){const [x,y]=off(cx,cy,u,v);s+=prism(x,y,.13,h+6,shade(c,1.12))}
+  case 'fence':{const c=['#d4862f','#9fb6d6','#3f6fa8'][t],h=6+3*t;
+    s+=prism(cx,cy,.92,h,c)+dia(cx,cy,.7,h,'#74de5c');
+    for(const [u,v] of [[-.46,-.46],[-.46,.46],[.46,-.46],[.46,.46]]){const [x,y]=off(cx,cy,u,v);s+=prism(x,y,.13,h+6,shade(c,1.15))+dia(x,y,.13,h+6,['#ffd166','#ffffff','#ffcc33'][t])}
     break}
-  case 'tree':s+=shadow(cx,cy,.22)+treeAt(cx,cy,[10,13,13][t],['#4f9d3a','#3f8a2f','#f2a7c3'][t],[10,14,14][t]);break;
+  case 'tree':s+=shadow(cx,cy,.22)+treeAt(cx,cy,[10,13,13][t],['#34c759','#1faa59','#ff7eb6'][t],[10,14,14][t]);
+    if(t===2)s+=`<circle cx="${cx+8}" cy="${cy-24}" r="2" fill="#fff"/><circle cx="${cx-7}" cy="${cy-30}" r="1.8" fill="#fff"/>`;break;
   case 'well':
-    if(t<2){const c=t?'#9aa0a8':'#b08355';s+=shadow(cx,cy,.26)+prism(cx,cy,.44,10,c)+dia(cx,cy,.3,10,'#2f6fb0')
-      +prism(cx-9,cy,.06,28,'#7a4b28')+prism(cx+9,cy,.06,28,'#7a4b28')+roof(cx,cy,.52,28,11,t?'#4f6378':'#a8452f')}
-    else s+=shadow(cx,cy,.4)+prism(cx,cy,.78,7,'#c9c3b5')+dia(cx,cy,.62,7,'#4aa3e0')+prism(cx,cy,.14,22,'#d8d2c4')
-      +`<ellipse cx="${cx}" cy="${cy-25}" rx="10" ry="5" fill="#9ad8ff" opacity=".9"/><ellipse cx="${cx}" cy="${cy-8}" rx="16" ry="6" fill="#bfe8ff" opacity=".5"/>`;
+    if(t<2){const c=t?'#9fb6d6':'#e0954a';s+=shadow(cx,cy,.26)+prism(cx,cy,.44,10,c)+dia(cx,cy,.3,10,'#1e90ff')
+      +prism(cx-9,cy,.06,28,'#8b5a2b')+prism(cx+9,cy,.06,28,'#8b5a2b')+roof(cx,cy,.52,28,11,t?'#1f7ae0':'#ff4d2e')}
+    else s+=shadow(cx,cy,.4)+prism(cx,cy,.78,7,'#ffe7b8')+dia(cx,cy,.62,7,'#2fb2ff')+prism(cx,cy,.14,22,'#fff1d6')
+      +`<ellipse cx="${cx}" cy="${cy-25}" rx="10" ry="5" fill="#7fdcff"/><ellipse cx="${cx}" cy="${cy-8}" rx="16" ry="6" fill="#c9f1ff" opacity=".7"/><circle cx="${cx-5}" cy="${cy-30}" r="2" fill="#fff"/>`;
     break;
-  case 'house':{const w=['#c8995e','#b9b4aa','#efe3c8'][t],r=['#a8452f','#4f6378','#2f4f9e'][t],h=18+5*t,sc=.58+.08*t,a=TW/2*sc,b=TH/2*sc;
+  case 'house':{const w=['#ffc46b','#ffe3c2','#fff5dc'][t],r=['#ff4d2e','#1f8fff','#9b4dff'][t],h=18+5*t,sc=.58+.08*t,a=TW/2*sc,b=TH/2*sc;
     s+=shadow(cx,cy,.36)+prism(cx,cy,sc,h,w);
-    const dx=cx-a*.45,dy=cy+b*.55;s+=`<polygon points="${P([[dx-3,dy-1.5],[dx+3,dy+1.5],[dx+3,dy-10.5],[dx-3,dy-13.5]])}" fill="#5a3a22"/>`;
-    const wx=cx+a*.5,wy=cy+b*.5-h*.5;s+=`<polygon points="${P([[wx-3,wy+1.5],[wx+3,wy-1.5],[wx+3,wy-6.5],[wx-3,wy-3.5]])}" fill="#ffe59a"/>`;
+    const dx=cx-a*.45,dy=cy+b*.55;s+=`<polygon points="${P([[dx-3,dy-1.5],[dx+3,dy+1.5],[dx+3,dy-10.5],[dx-3,dy-13.5]])}" fill="${['#7a3e12','#2b4c7e','#5b2a91'][t]}"/>`;
+    const wx=cx+a*.5,wy=cy+b*.5-h*.5;s+=`<polygon points="${P([[wx-3,wy+1.5],[wx+3,wy-1.5],[wx+3,wy-6.5],[wx-3,wy-3.5]])}" fill="#ffe14d"/>`;
     s+=roof(cx,cy,sc+.1,h,16+5*t,r);
-    if(t===2){const [x,y]=off(cx,cy,.12,-.2);s+=prism(x,y,.1,h+22,'#8a8070')}
+    if(t===2){const [x,y]=off(cx,cy,.12,-.2);s+=prism(x,y,.1,h+22,'#c0754a')}
     break}
-  case 'farm':{s+=prism(cx,cy,.92,3,'#8a5a33');const crop=['#9bd46a','#e8c547','#5aa83f'][t];
-    for(let i=-3;i<=3;i++){const u=i*.12,[x1,y1]=off(cx,cy-3,u,-.4),[x2,y2]=off(cx,cy-3,u,.4);s+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${crop}" stroke-width="3.2" stroke-linecap="round"/>`}
-    if(t>=1){const [x,y]=off(cx,cy,-.3,-.3);s+=prism(x,y,.3,12,'#b33a2e',3)+roof(x,y,.34,15,9,'#6b2a22')}
-    if(t===2)for(const [u,v] of [[.3,-.25],[-.25,.3],[.3,.3]]){const [x,y]=off(cx,cy,u,v);s+=treeAt(x,y-3,7,'#e3523d',8)}
+  case 'farm':{s+=prism(cx,cy,.92,3,'#b8682c');const crop=['#8ee04a','#ffd23f','#2fbf4a'][t];
+    for(let i=-3;i<=3;i++){const u=i*.12,[x1,y1]=off(cx,cy-3,u,-.4),[x2,y2]=off(cx,cy-3,u,.4);s+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${crop}" stroke-width="3.4" stroke-linecap="round"/>`}
+    if(t>=1){const [x,y]=off(cx,cy,-.3,-.3);s+=prism(x,y,.3,12,'#ff3b3b',3)+roof(x,y,.34,15,9,'#a3122a')+`<rect x="${x-2}" y="${y-11}" width="4" height="6" fill="#fff"/>`}
+    if(t===2)for(const [u,v] of [[.3,-.25],[-.25,.3],[.3,.3]]){const [x,y]=off(cx,cy,u,v);s+=treeAt(x,y-3,7,'#2fbf4a',8)+`<circle cx="${x-2}" cy="${y-15}" r="1.8" fill="#ff3b3b"/><circle cx="${x+3}" cy="${y-13}" r="1.8" fill="#ff3b3b"/>`}
     break}
-  case 'tower':{const c=['#b08355','#9aa0a8','#7d5bc4'][t],r=['#a8452f','#4f6378','#3b2a78'][t],h=44+10*t;
-    s+=shadow(cx,cy,.28)+prism(cx,cy,.42,h,c)+prism(cx,cy,.52,6,shade(c,1.12),h)+roof(cx,cy,.52,h+6,20+6*t,r);
-    s+=`<rect x="${cx-9}" y="${cy-h*.62}" width="3" height="9" fill="#2a1d12" opacity=".7"/>`;
-    if(t===2)s+=`<path d="${starPath(cx,cy-h-6-26-14-6,7)}" fill="#ffd447" stroke="#9b6a00"/>`;
+  case 'tower':{const c=['#e0954a','#9fb6d6','#9b5cff'][t],r=['#ff4d2e','#1f7ae0','#3a1fb0'][t],h=44+10*t;
+    s+=shadow(cx,cy,.28)+prism(cx,cy,.42,h,c)+prism(cx,cy,.52,6,shade(c,1.15),h)+roof(cx,cy,.52,h+6,20+6*t,r);
+    s+=`<rect x="${cx-9}" y="${cy-h*.62}" width="3" height="9" fill="#ffe14d"/>`;
+    const top=cy-h-6-(20+6*t);
+    s+=`<line x1="${cx}" y1="${top}" x2="${cx}" y2="${top-10}" stroke="#4a3a2a" stroke-width="1.4"/><polygon points="${P([[cx,top-10],[cx+9,top-8],[cx,top-6]])}" fill="${['#ffcc00','#ff4d2e','#ffcc00'][t]}"/>`;
+    if(t===2)s+=`<circle cx="${cx}" cy="${cy-h*.4}" r="4" fill="#ffe14d" opacity=".9"/>`;
     break}
-  case 'library':{const c=['#e9dcc0','#f1ede4','#d9cfb8'][t],h=22+4*t,sc=.8,a=TW/2*(sc-.08),b=TH/2*(sc-.08);
-    s+=shadow(cx,cy,.4)+prism(cx,cy,sc,4,'#bdb3a0')+prism(cx,cy,sc-.08,h,c,4);
-    for(let i=1;i<=4;i++){const x=cx-a+a*i/5,y=cy+b*i/5-4;s+=`<line x1="${x}" y1="${y}" x2="${x}" y2="${y-h+3}" stroke="${shade(c,.62)}" stroke-width="2"/>`}
-    if(t<2)s+=roof(cx,cy,sc,h+4,12+4*t,['#8a5a33','#5f6f86'][t]);
-    else s+=prism(cx,cy,sc-.06,3,shade(c,.9),h+4)+`<path d="M${cx-16} ${cy-h-7} A16 14 0 0 1 ${cx+16} ${cy-h-7} Z" fill="#6aa5c9"/><circle cx="${cx}" cy="${cy-h-23}" r="3" fill="#ffd447"/>`;
+  case 'library':{const c=['#ffd99a','#fff1dc','#ffffff'][t],h=22+4*t,sc=.8,a=TW/2*(sc-.08),b=TH/2*(sc-.08);
+    s+=shadow(cx,cy,.4)+prism(cx,cy,sc,4,'#d9b98a')+prism(cx,cy,sc-.08,h,c,4);
+    for(let i=1;i<=4;i++){const x=cx-a+a*i/5,y=cy+b*i/5-4;s+=`<line x1="${x}" y1="${y}" x2="${x}" y2="${y-h+3}" stroke="${shade(c,.6)}" stroke-width="2"/>`}
+    if(t<2)s+=roof(cx,cy,sc,h+4,12+4*t,['#e63946','#12b5a6'][t]);
+    else s+=prism(cx,cy,sc-.06,3,'#ffd166',h+4)+`<path d="M${cx-16} ${cy-h-7} A16 14 0 0 1 ${cx+16} ${cy-h-7} Z" fill="#29b6f6"/><circle cx="${cx}" cy="${cy-h-23}" r="3" fill="#ffcc00"/>`;
     break}
-  case 'statue':{const col=['#c9ccd2','#ffd447','#b78cff'][t],r=[9,11,14][t];
-    s+=shadow(cx,cy,.26)+prism(cx,cy,.4,12,'#9aa0a8')+prism(cx,cy,.27,6,'#b8bec6',12);
-    if(t===2)s+=`<circle cx="${cx}" cy="${cy-18-r}" r="${r+9}" fill="#b78cff" opacity=".35"/>`;
+  case 'statue':{const col=['#dfe7f2','#ffd000','#c17bff'][t],r=[9,11,14][t];
+    s+=shadow(cx,cy,.26)+prism(cx,cy,.4,12,'#8fa4c2')+prism(cx,cy,.27,6,'#c3d0e3',12);
+    if(t>=1)s+=`<circle cx="${cx}" cy="${cy-18-r}" r="${r+9}" fill="${t===2?'#c17bff':'#ffe14d'}" opacity=".35"/>`;
     s+=`<path d="${starPath(cx,cy-18-r,r)}" fill="${col}" stroke="${shade(col,.6)}" stroke-width="1"/>`;
     break}
-  case 'castle':{const c=['#a9a49a','#9aa0a8','#ece6d8'][t],rf=['#6b5d4f','#4f6378','#c9a227'][t],h=28+6*t,sc=.86,a=TW/2*sc,b=TH/2*sc;
+  case 'castle':{const c=['#d8cdb8','#c7d3e6','#fff4dc'][t],rf=['#ff4d2e','#1f7ae0','#ffc400'][t],h=28+6*t,sc=.86,a=TW/2*sc,b=TH/2*sc;
     s+=shadow(cx,cy,.45)+prism(cx,cy,sc,h,c);
-    const tw=(x,y)=>prism(x,y,.2,h+14,shade(c,1.06))+roof(x,y,.24,h+14,11,rf);
-    s+=tw(cx,cy-b)+prism(cx,cy,.36,h+24,shade(c,.96))+roof(cx,cy,.42,h+24,15,rf);
-    const fy=cy-h-24-15;s+=`<line x1="${cx}" y1="${fy}" x2="${cx}" y2="${fy-14}" stroke="#4a3a2a" stroke-width="1.5"/><polygon points="${P([[cx,fy-14],[cx+11,fy-11],[cx,fy-8]])}" fill="${t===2?'#7d5bc4':'#d63c3c'}"/>`;
+    s+=`<polygon points="${P([[cx-4,cy+b-1],[cx+4,cy+b-1],[cx+4,cy+b-14],[cx-4,cy+b-14]])}" fill="#6b3d1f"/>`;
+    const tw=(x,y)=>prism(x,y,.2,h+14,shade(c,1.05))+roof(x,y,.24,h+14,11,rf);
+    s+=tw(cx,cy-b)+prism(cx,cy,.36,h+24,shade(c,.97))+roof(cx,cy,.42,h+24,15,rf);
+    const fy=cy-h-24-15;s+=`<line x1="${cx}" y1="${fy}" x2="${cx}" y2="${fy-14}" stroke="#4a3a2a" stroke-width="1.5"/><polygon points="${P([[cx,fy-14],[cx+11,fy-11],[cx,fy-8]])}" fill="${['#ffcc00','#ff4d2e','#9b4dff'][t]}"/>`;
     s+=tw(cx-a,cy)+tw(cx+a,cy)+tw(cx,cy+b);
     break}
   }
   return s}
+const hsh=(x,y)=>((x*73856093)^(y*19349663))>>>0;
 function mapSvg(b,live){
   const Lc=[OX-KN*TW/2,OY+KN*TH/2],Bc=[OX,OY+KN*TH],Rc=[OX+KN*TW/2,OY+KN*TH/2];
-  let g=`<polygon points="${P([Lc,Bc,[Bc[0],Bc[1]+KD],[Lc[0],Lc[1]+KD]])}" fill="#8a5a33"/><polygon points="${P([Bc,Rc,[Rc[0],Rc[1]+KD],[Bc[0],Bc[1]+KD]])}" fill="#6e4626"/><g class="kt">`;
-  for(let y=0;y<KN;y++)for(let x=0;x<KN;x++){const [cx,cy]=tc(x,y);g+=`<polygon data-k="${x}_${y}" points="${P([[cx-TW/2,cy],[cx,cy+TH/2],[cx+TW/2,cy],[cx,cy-TH/2]])}" fill="${(x+y)%2?'#7cc35a':'#86c95f'}"/>`}
+  let g=`<polygon points="${P([Lc,Bc,[Bc[0],Bc[1]+KD],[Lc[0],Lc[1]+KD]])}" fill="#c4702f"/><polygon points="${P([Bc,Rc,[Rc[0],Rc[1]+KD],[Bc[0],Bc[1]+KD]])}" fill="#9a5222"/>`
+    +`<polygon points="${P([[Lc[0],Lc[1]+KD-5],[Bc[0],Bc[1]+KD-5],[Bc[0],Bc[1]+KD],[Lc[0],Lc[1]+KD]])}" fill="#7a3f17"/><polygon points="${P([[Bc[0],Bc[1]+KD-5],[Rc[0],Rc[1]+KD-5],[Rc[0],Rc[1]+KD],[Bc[0],Bc[1]+KD]])}" fill="#5e2f10"/><g class="kt">`;
+  for(let y=0;y<KN;y++)for(let x=0;x<KN;x++){const [cx,cy]=tc(x,y);g+=`<polygon data-k="${x}_${y}" points="${P([[cx-TW/2,cy],[cx,cy+TH/2],[cx+TW/2,cy],[cx,cy-TH/2]])}" fill="${(x+y)%2?'#5fd04a':'#6edb57'}"/>`}
+  g+='</g><g style="pointer-events:none">';
+  for(let y=0;y<KN;y++)for(let x=0;x<KN;x++){if(b&&b[x+'_'+y])continue;const h=hsh(x,y);if(h%6)continue;const [cx,cy]=tc(x,y),col=['#ff5fa2','#ffe14d','#ffffff','#b388ff'][h%4];
+    g+=`<circle cx="${cx-6+h%9}" cy="${cy-2+h%5}" r="2" fill="${col}"/><circle cx="${cx+4-h%7}" cy="${cy+3-h%4}" r="1.6" fill="${col}"/>`}
   g+='</g><g id="kHi'+(live?'':'v')+'" style="pointer-events:none"></g><g class="kb">';
   const keys=Object.keys(b||{}).filter(k=>Array.isArray(b[k])&&KB[b[k][0]]).map(k=>{const [x,y]=k.split('_').map(Number);return {k,x,y}}).sort((p,q)=>(p.x+p.y)-(q.x+q.y)||p.x-q.x);
   for(const {k,x,y} of keys){const [cx,cy]=tc(x,y),[ty,tr]=b[k];g+=`<g data-k="${k}"${live&&k===kSel?' class="sel"':''}><title>${esc(KB[ty].n[tr])}</title>${sprite(ty,tr,cx,cy)}</g>`}
-  return `<svg class="kmap" viewBox="0 0 ${KN*TW} ${OY+KN*TH+KD+8}" role="img" aria-label="Kingdom map">${g}</g>${live?'<g id="kGhost" opacity=".6" style="pointer-events:none"></g>':''}</svg>`;
+  return `<svg class="kmap" viewBox="0 0 ${KN*TW} ${OY+KN*TH+KD+8}" role="img" aria-label="Kingdom map">${g}</g>${live?'<g id="kGhost" opacity=".65" style="pointer-events:none"></g>':''}</svg>`;
 }
-const miniIcon=(ty,tr)=>`<svg class="ki" viewBox="-40 -92 80 112" aria-hidden="true">${dia(0,0,1,0,'#86c95f')}${sprite(ty,tr,0,0)}</svg>`;
-function drawHover(){const hi=$('#kHi'),gh=$('#kGhost');if(!hi)return;hi.innerHTML='';gh.innerHTML='';
+const miniIcon=(ty,tr)=>`<svg class="ki" viewBox="-40 -92 80 112" aria-hidden="true">${dia(0,0,1,0,'#6edb57')}${sprite(ty,tr,0,0)}</svg>`;
+const bankIcon=()=>`<svg class="bki" viewBox="-44 -70 88 96" aria-hidden="true">${dia(0,0,1.1,0,'#6edb57')}${prism(0,0,.8,6,'#c3d0e3')}${prism(0,0,.7,26,'#fff4dc',6)}${roof(0,0,.8,32,14,'#ffc400')}<circle cx="0" cy="-36" r="6" fill="#ffc400" stroke="#b07800"/><text x="0" y="-33" text-anchor="middle" font-size="8" font-weight="700" fill="#6b4500" font-family="Inter,sans-serif">A</text></svg>`;
+function drawHover(){const hi=$('#kHi'),gh=$('#kGhost');if(!hi||!gh)return;hi.innerHTML='';gh.innerHTML='';
   const k=kHover;if(!k)return;const [x,y]=k.split('_').map(Number),[cx,cy]=tc(x,y),taken=!!(kd&&kd.b[k]);
-  if(kPlace){const bad=taken&&!(kPlace.move===k);hi.innerHTML=`<polygon points="${P([[cx-TW/2,cy],[cx,cy+TH/2],[cx+TW/2,cy],[cx,cy-TH/2]])}" fill="${bad?'#d63c3c':'#fff'}" opacity=".45"/>`;
+  const poly=(f,o)=>`<polygon points="${P([[cx-TW/2,cy],[cx,cy+TH/2],[cx+TW/2,cy],[cx,cy-TH/2]])}" fill="${f}" opacity="${o}"/>`;
+  if(kPlace){const bad=taken;hi.innerHTML=poly(bad?'#ff3b3b':'#ffffff',.5);
     if(!bad){const [ty,tr]=kPlace.move?kd.b[kPlace.move]:[kPlace.type,0];gh.innerHTML=sprite(ty,tr,cx,cy)}}
-  else if(taken||k)hi.innerHTML=`<polygon points="${P([[cx-TW/2,cy],[cx,cy+TH/2],[cx+TW/2,cy],[cx,cy-TH/2]])}" fill="#fff" opacity=".25"/>`}
-function renderKingdom(){
-  const el=$('#kg'),ac=$('#aca');if(!el)return;
+  else hi.innerHTML=poly('#fff',.28)}
+/* main-page cards: kingdom preview + bank */
+function renderKHome(){const el=$('#kgHome'),ac=$('#aca');if(!el)return;
   if(!cloudOK){el.innerHTML='<p class="sub" style="margin-top:14px">Your kingdom needs an internet connection.</p>';ac.innerHTML='';return}
   if(!me){el.innerHTML='<div class="row" style="margin-top:14px"><span class="sub">Sign in to build your kingdom.</span><button id="kSign" type="button">Sign in</button></div>';ac.innerHTML='';return}
   if(!kd){el.innerHTML='<p class="sub" style="margin-top:14px">Opening your kingdom…</p>';ac.innerHTML='';return}
-  const aca=+kd.aca||0,st=myStars(),ready=Math.max(0,st-(+kd.conv||0)),nb=Object.keys(kd.b||{}).length;
-  ac.innerHTML=coin()+' '+aca+' Aca';
-  let side=`<div class="kcard tre"><div><small class="sub">Stars ready to convert</small><b>${ready}★ → ${ready*10} Aca</b></div>${ready?'<button class="big" id="kConv" type="button">Convert</button>':'<span class="sub">Study to earn more stars. 1★ = 10 Aca.</span>'}</div>`;
+  const n=Object.keys(kd.b||{}).length,r=kReady();ac.innerHTML=coin()+' '+(+kd.aca||0)+' Aca';
+  el.innerHTML=`<div class="khome"><button class="kprev" id="kOpenBtn" type="button" aria-label="Open your kingdom">${mapSvg(kd.b,false)}<span class="kgo">Open kingdom</span></button>
+    <div class="bankc">${bankIcon()}<div><h3>Bank</h3><p class="sub">Exchange study stars for Aca coins. 1★ = 10 Aca.</p>
+      <p class="bk2"><b>${r}★</b> ready to exchange · <b>${+kd.aca||0}</b> Aca saved</p><button class="big" id="bankOpen" type="button">Open bank</button></div></div></div>
+    <p class="kmeta2">${n} building${n===1?'':'s'} · ${esc(levelOf(myStars()).name)}</p>`;
+}
+/* full-screen kingdom editor */
+function renderKFS(){if(!kOpen)return;const fs=$('#kfs');if(!kd||!me){closeKingdom();return}
+  const aca=+kd.aca||0,st=myStars(),nb=Object.keys(kd.b||{}).length;
+  $('#aca2').innerHTML=coin()+' '+aca+' Aca';$('#kTitle').textContent=me.name+'’s kingdom';
+  $('#kview').innerHTML=`<div id="kmap" class="${kPlace?'placing':''}" style="width:${kZoom*100}%">${mapSvg(kd.b,true)}</div>`;
+  let side='';const r=kReady();
+  if(r)side+=`<button class="kcard tre" id="kBank2" type="button"><span><small class="sub">Bank</small><b>${r}★ ready → ${r*10} Aca</b></span><span class="sub">Open bank ›</span></button>`;
   if(kPlace){const nm=kPlace.move?KB[kd.b[kPlace.move][0]].n[kd.b[kPlace.move][1]]:KB[kPlace.type].n[0];
     side+=`<div class="kcard"><b>${kPlace.move?'Moving':'Placing'} ${esc(nm)}</b><span class="sub">Click a free tile on the map.${kPlace.move?'':' Cost: '+KB[kPlace.type].c[0]+' Aca each.'}</span><button id="kCancel" type="button">${kPlace.move?'Cancel move':'Done placing'}</button></div>`}
   else if(kSel&&kd.b[kSel]){const [ty,tr]=kd.b[kSel],B=KB[ty],nx=tr+1;
@@ -653,34 +706,59 @@ function renderKingdom(){
       up=lk?`<button disabled>Upgrade to ${esc(B.n[nx])} · needs ${B.s[nx]}★</button>`:poor?`<button disabled>Upgrade to ${esc(B.n[nx])} · ${B.c[nx]} Aca (need ${B.c[nx]-aca} more)</button>`:`<button class="big" id="kUp" type="button">Upgrade to ${esc(B.n[nx])} · ${B.c[nx]} Aca</button>`}
     else up='<span class="sub">Fully upgraded.</span>';
     side+=`<div class="kcard sel">${miniIcon(ty,tr)}<div><b>${esc(B.n[tr])}</b><small class="sub">Level ${tr+1} of 3</small></div>${up}<div class="row"><button id="kMove" type="button">Move</button><button id="kDel" type="button">Demolish</button><button id="kDesel" type="button">Close</button></div></div>`}
-  side+=`<div class="kshop">${KORDER.map(ty=>{const B=KB[ty],lk=st<B.s[0],poor=aca<B.c[0];
-    return `<button class="kitem${lk?' lk':''}" data-buy="${ty}" ${lk||poor?'disabled':''} type="button">${miniIcon(ty,0)}<span><b>${esc(B.n[0])}</b><small>${lk?'Needs '+B.s[0]+'★':B.c[0]+' Aca'+(poor?' · need '+(B.c[0]-aca)+' more':'')}</small></span></button>`}).join('')}</div>`;
-  el.innerHTML=`<div class="kwrap"><div class="kmapbox${kPlace?' placing':''}" id="kmap">${mapSvg(kd.b,true)}<p class="kmeta">${nb} building${nb===1?'':'s'} · ${esc(levelOf(st).name)}</p></div><div class="kside">${side}</div></div>`;
-  drawHover();
+  side+=`<h3 class="kh">Build</h3><div class="kshop">${KORDER.map(ty=>{const B=KB[ty],lk=st<B.s[0],poor=aca<B.c[0];
+    return `<button class="kitem${lk?' lk':''}${kPlace&&kPlace.type===ty?' on':''}" data-buy="${ty}" ${lk||poor?'disabled':''} type="button">${miniIcon(ty,0)}<span><b>${esc(B.n[0])}</b><small>${lk?'Needs '+B.s[0]+'★':B.c[0]+' Aca'+(poor?' · need '+(B.c[0]-aca)+' more':'')}</small></span></button>`}).join('')}</div>
+    <p class="sub kfoot">${nb} building${nb===1?'':'s'} · ${esc(levelOf(st).name)} · Esc to cancel</p>`;
+  $('#kpanel').innerHTML=side;drawHover();
 }
+function renderKingdom(){renderKHome();renderKFS();if(!$('#bankM').hidden)renderBank()}
+function openKingdom(){if(!kd)return;kOpen=true;$('#kfs').hidden=false;document.body.style.overflow='hidden';renderKFS()}
+function closeKingdom(){kOpen=false;kPlace=null;kSel=null;$('#kfs').hidden=true;document.body.style.overflow='';try{if(document.fullscreenElement)document.exitFullscreen()}catch(e){}renderKHome()}
+/* bank */
+function renderBank(){const r=kReady(),aca=kd?+kd.aca||0:0;bankN=Math.max(r?1:0,Math.min(bankN,r));
+  $('#bankBody').innerHTML=`<div class="bkstats"><div><small>Stars earned</small><b>${myStars()}★</b></div><div><small>Already exchanged</small><b>${kd?+kd.conv||0:0}★</b></div><div><small>Ready to exchange</small><b>${r}★</b></div><div><small>Your Aca</small><b>${aca}</b></div></div>
+    ${r?`<div class="bkx"><div class="row"><button id="bkMinus" type="button" aria-label="One star less">−</button><span class="bkn"><b>${bankN}★</b> → <b>${bankN*10} Aca</b></span><button id="bkPlus" type="button" aria-label="One star more">+</button><button id="bkAll" type="button">All (${r}★)</button></div>
+      <button class="big" id="bkGo" type="button">Exchange ${bankN}★ for ${bankN*10} Aca</button></div>`
+      :'<p class="sub">No stars to exchange right now. Every hour you study earns a new star.</p>'}
+    <p class="sub" style="margin:0">Exchanging doesn’t take stars away: your leaderboard rank and level stay the same.</p>`}
+function openBank(){bankN=kReady();renderBank();openM('#bankM')}
+$('#bankM').addEventListener('click',async e=>{const r=kReady();
+  if(e.target.closest('#bkMinus')){bankN=Math.max(1,bankN-1);renderBank()}
+  else if(e.target.closest('#bkPlus')){bankN=Math.min(r,bankN+1);renderBank()}
+  else if(e.target.closest('#bkAll')){bankN=r;renderBank()}
+  else if(e.target.closest('#bkGo')){const n=bankN;if(n<1||n>r)return;e.target.closest('#bkGo').disabled=true;
+    await kDo(()=>SScloud.convert(n),`Exchanged ${n}★ for ${n*10} Aca!`);tone([1047,1319,1568],.1);renderBank()}});
 async function kDo(fn,okMsg){if(kBusy)return;kBusy=true;try{await fn();if(okMsg)banner(okMsg)}catch(e){note('That didn’t work ('+(e.code||e.message)+').')}kBusy=false}
-$('#kg').addEventListener('pointermove',e=>{const t=e.target.closest('#kmap [data-k]');const k=t?t.dataset.k:null;if(k!==kHover){kHover=k;drawHover()}});
-$('#kg').addEventListener('pointerleave',()=>{kHover=null;drawHover()});
-$('#kg').addEventListener('click',async e=>{
+$('#kgHome').addEventListener('click',e=>{
   if(e.target.closest('#kSign')){setMode(false);openM('#auth');return}
-  if(e.target.closest('#kConv')){const st=myStars(),r=st-kd.conv;await kDo(()=>SScloud.convert(st),`+${r*10} Aca added to your treasury!`);return}
-  const buy=e.target.closest('[data-buy]');if(buy){kPlace={type:buy.dataset.buy};kSel=null;renderKingdom();return}
-  if(e.target.closest('#kCancel')){kPlace=null;renderKingdom();return}
-  if(e.target.closest('#kDesel')){kSel=null;renderKingdom();return}
+  if(e.target.closest('#kOpenBtn'))openKingdom();
+  if(e.target.closest('#bankOpen'))openBank()});
+$('#kfs').addEventListener('pointermove',e=>{const t=e.target.closest('#kmap [data-k]');const k=t?t.dataset.k:null;if(k!==kHover){kHover=k;drawHover()}});
+$('#kfs').addEventListener('pointerleave',()=>{kHover=null;drawHover()});
+$('#kfs').addEventListener('click',async e=>{
+  if(e.target.closest('#kBack')){closeKingdom();return}
+  if(e.target.closest('#kBankBtn')||e.target.closest('#kBank2')){openBank();return}
+  if(e.target.closest('#kZoomIn')||e.target.closest('#kZoomOut')){kZoom=Math.min(3,Math.max(1,kZoom+(e.target.closest('#kZoomIn')?.5:-.5)));LS.set('ss-kz',kZoom);renderKFS();return}
+  if(e.target.closest('#kFull')){try{if(document.fullscreenElement)await document.exitFullscreen();else await $('#kfs').requestFullscreen()}catch(err){note('Full screen isn’t available here.')}return}
+  const buy=e.target.closest('[data-buy]');if(buy){kPlace={type:buy.dataset.buy};kSel=null;renderKFS();return}
+  if(e.target.closest('#kCancel')){kPlace=null;renderKFS();return}
+  if(e.target.closest('#kDesel')){kSel=null;renderKFS();return}
   if(e.target.closest('#kUp')){const [ty,tr]=kd.b[kSel];await kDo(()=>SScloud.upgrade(kSel,KB[ty].c[tr+1]),'Upgraded to '+KB[ty].n[tr+1]+'!');return}
-  if(e.target.closest('#kMove')){kPlace={move:kSel};renderKingdom();return}
+  if(e.target.closest('#kMove')){kPlace={move:kSel};renderKFS();return}
   const del=e.target.closest('#kDel');
   if(del){if(!del.classList.contains('sure')){del.classList.add('sure');del.textContent='Demolish? No refund';setTimeout(()=>{if(del.isConnected){del.classList.remove('sure');del.textContent='Demolish'}},3000);return}
     const k=kSel;kSel=null;await kDo(()=>SScloud.demolish(k));return}
   const t=e.target.closest('#kmap [data-k]');if(!t)return;const k=t.dataset.k;
   if(kPlace){if(kd.b[k])return;
     if(kPlace.move){const a=kPlace.move;kPlace=null;kSel=k;await kDo(()=>SScloud.move(a,k));return}
-    const ty=kPlace.type,c=KB[ty].c[0];if((+kd.aca||0)<c){kPlace=null;renderKingdom();return}
+    const ty=kPlace.type,c=KB[ty].c[0];if((+kd.aca||0)<c){kPlace=null;renderKFS();return}
     const left=(+kd.aca||0)-c;await kDo(()=>SScloud.build(k,ty,c),KB[ty].n[0]+' built!');
-    if(kPlace&&left<c)kPlace=null;renderKingdom();return}
-  kSel=kd.b[k]?k:null;renderKingdom();
+    if(kPlace&&left<c)kPlace=null;renderKFS();return}
+  kSel=kd.b[k]?k:null;renderKFS();
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(kPlace||kSel)){kPlace=null;kSel=null;renderKingdom()}});
+document.addEventListener('fullscreenchange',()=>{const b=$('#kFull');if(b)b.textContent=document.fullscreenElement?'Exit full screen':'Full screen'});
+document.addEventListener('keydown',e=>{if(e.key!=='Escape'||!kOpen||!$('#bankM').hidden||!$('#visit').hidden)return;
+  if(kPlace||kSel){kPlace=null;kSel=null;renderKFS()}else if(!document.fullscreenElement)closeKingdom()});
 /* visiting another kingdom (view only) */
 async function visit(uid){const r=lbData&&lbData.find(x=>x.id===uid);if(!r||!window.SScloud)return;
   $('#visH').textContent=r.name+'’s kingdom';$('#visMap').innerHTML='<p class="sub">Loading…</p>';openM('#visit');
@@ -698,7 +776,7 @@ window.SS={store,banner,note,
   ready(){cloudOK=true;renderAcct()},
   failed(){cloudOK=false;renderAcct();note('Online features couldn’t load, so you’re offline. Stars are saved on this laptop.')},
   signedIn(u){me=u;key='ss-acct-'+u.uid;items=LS.get(key,[]);renderAll();note('Signed in as '+u.name+'. Your stars sync to your account.')},
-  signedOut(){me=null;lbData=null;kd=null;kSel=null;kPlace=null;$('#lbNote').hidden=true;store.push=store.del=null;key='ss-stars';items=LS.get(key,[]).filter(s=>s&&s.id&&s.end);renderAll();note('Not signed in. Stars are saved on this laptop only — sign in to keep them in your account.')},
+  signedOut(){me=null;lbData=null;kd=null;kSel=null;kPlace=null;if(kOpen)closeKingdom();closeM('#bankM');$('#lbNote').hidden=true;store.push=store.del=null;key='ss-stars';items=LS.get(key,[]).filter(s=>s&&s.id&&s.end);renderAll();note('Not signed in. Stars are saved on this laptop only — sign in to keep them in your account.')},
   setItems(a){items=a;saveI();renderAll()}};
 
 $('#bigp').setAttribute('d',starPath(100,106,94));

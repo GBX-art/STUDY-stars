@@ -75,7 +75,7 @@ window.SScloud = {
     return b.commit();
   },
   // Kingdom. The security rules check every price, level and conversion.
-  convert: stars => F.updateDoc(kref, { aca: myK.aca + (stars - myK.conv) * 10, conv: stars }),
+  convert: n => F.updateDoc(kref, { aca: myK.aca + n * 10, conv: myK.conv + n }),
   build: (k, type, price) => F.updateDoc(kref, new F.FieldPath('b', k), [type, 0], 'aca', myK.aca - price, 'op', k),
   upgrade: (k, price) => F.updateDoc(kref, new F.FieldPath('b', k), [myK.b[k][0], myK.b[k][1] + 1], 'aca', myK.aca - price, 'op', k),
   move: (a, k) => F.updateDoc(kref, new F.FieldPath('b', a), F.deleteField(), new F.FieldPath('b', k), myK.b[a], 'op', a + '-' + k),
