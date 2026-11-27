@@ -80,6 +80,21 @@ window.SScloud = {
   upgrade: (k, price) => F.updateDoc(kref, new F.FieldPath('b', k), [myK.b[k][0], myK.b[k][1] + 1], 'aca', myK.aca - price, 'op', k),
   move: (a, k) => F.updateDoc(kref, new F.FieldPath('b', a), F.deleteField(), new F.FieldPath('b', k), myK.b[a], 'op', a + '-' + k),
   demolish: a => F.updateDoc(kref, new F.FieldPath('b', a), F.deleteField(), 'op', 'rm-' + a),
+  // Delete the account: confirm identity, remove all of the user's data, then the sign-in itself.
+  deleteAccount: async pw => {
+    const u = auth.currentUser; if (!u) throw new Error('Not signed in');
+    if (u.providerData.some(p => p.providerId === 'google.com')) await A.reauthenticateWithPopup(u, new A.GoogleAuthProvider());
+    else await A.reauthenticateWithCredential(u, A.EmailAuthProvider.credential(u.email, pw));
+    unsubs.forEach(f => f()); unsubs = [];
+    const uid = u.uid;
+    await F.deleteDoc(F.doc(db, 'board', uid));            // leaderboard entry first
+    const ss = await F.getDocs(F.collection(db, 'users', uid, 'sessions'));
+    for (let i = 0; i < ss.docs.length; i += 400) { const b = F.writeBatch(db); ss.docs.slice(i, i + 400).forEach(d => b.delete(d.ref)); await b.commit(); }
+    await F.deleteDoc(F.doc(db, 'kingdom', uid));
+    await F.deleteDoc(F.doc(db, 'users', uid));
+    await A.deleteUser(u);
+    return uid;
+  },
   visit: async uid => { const s = await F.getDoc(F.doc(db, 'kingdom', uid)); return s.exists() ? s.data() : { aca: 0, conv: 0, b: {} }; }
 };
 
@@ -131,7 +146,7 @@ A.onAuthStateChanged(auth, async u => {
       catch (e) { SS.note('Couldn’t save that to your account (' + e.code + '). Check your internet.'); }
     };
     SS.store.del = id => F.deleteDoc(sref(u.uid, id)).catch(() => {});
-    SS.signedIn({ uid: u.uid, name: data.name, photo: data.photo || '', email: u.email || '' });
+    SS.signedIn({ uid: u.uid, name: data.name, photo: data.photo || '', email: u.email || '', google: u.providerData.some(p => p.providerId === 'google.com') });
     if (fresh) SS.banner(`Welcome! ${fresh} offline session${fresh > 1 ? 's were' : ' was'} added to your account.`);
     let boardChecked = false;
     unsubs.push(F.onSnapshot(F.collection(db, 'users', u.uid, 'sessions'), s => {

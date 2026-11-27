@@ -1,6 +1,6 @@
 // Study Stars service worker: answers notification buttons and lets the app work offline.
-const CACHE = 'study-stars-v10';
-const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'cloud.js'];
+const CACHE = 'study-stars-v11';
+const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'cloud.js', 'pdf.html'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).catch(() => {}));

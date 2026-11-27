@@ -117,6 +117,8 @@ td .del{min-height:36px;padding:0 12px;font-size:14px}td .del.sure{color:var(--r
 .avL{width:96px;height:96px;border-radius:50%;object-fit:cover;font-size:38px;flex:none}
 .lvl{margin:8px 0 0;font-size:15px}
 .mh{display:flex;justify-content:space-between;align-items:center;gap:8px}.x{min-height:40px;padding:0 12px}
+.dz{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}.dbtn{border-color:transparent;background:none;color:var(--red);padding:0 4px;text-decoration:underline}
+.dfill{background:var(--red);border-color:var(--red);color:#fff;font-weight:600}
 .card p.small{margin:6px 0 16px;font-size:14px;color:var(--soft)}.card p.err{color:var(--red);font-size:14px;min-height:1.3em;margin:10px 0 0}
 .gbtn{width:100%;font-weight:600}.or{text-align:center;color:var(--soft);font-size:13px;margin:14px 0}
 .field{margin-bottom:12px}
@@ -137,17 +139,20 @@ td .del{min-height:36px;padding:0 12px;font-size:14px}td .del.sure{color:var(--r
 .aca{display:inline-flex;align-items:center;gap:8px;font:600 20px Outfit,sans-serif;padding:6px 14px;border-radius:24px;background:var(--gold2)}.aca svg{width:22px;height:22px}
 .appbar{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:calc(8px + env(safe-area-inset-top)) max(4vw,14px) 8px;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
 .brand{display:flex;align-items:center;gap:8px;font:600 20px Outfit,sans-serif}.brand svg{width:26px;height:26px;fill:var(--gold)}
-.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--bg);border-top:1px solid var(--line);padding:4px 4px calc(4px + env(safe-area-inset-bottom))}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:var(--bg);border-top:1px solid var(--line);padding:4px 4px calc(4px + env(safe-area-inset-bottom))}
 .tabbar button{border:0;background:none;display:grid;justify-items:center;gap:2px;min-height:58px;padding:6px 2px;border-radius:14px;color:var(--soft);font-size:12px;font-weight:600}
 .tabbar svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .tabbar button[aria-current=page]{color:var(--vio);background:var(--vio2)}
 .main{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 .view[hidden]{display:none}
+.pdfview iframe{display:block;width:100%;height:calc(100dvh - 63px - 70px - env(safe-area-inset-bottom) - env(safe-area-inset-top));border:0;background:#0a2540}
+body.onpdf .main{padding-bottom:calc(70px + env(safe-area-inset-bottom))}
 .view .band:first-child{padding-top:clamp(16px,3vw,36px)}
 @media(min-width:900px){
   .tabbar{top:0;right:auto;width:96px;grid-template-columns:none;grid-auto-rows:min-content;align-content:start;gap:6px;padding:76px 8px 8px;border-top:0;border-right:1px solid var(--line)}
   .tabbar button{min-height:68px;font-size:13px}
   .appbar{margin-left:96px}.main{margin-left:96px;padding-bottom:24px}
+  .pdfview iframe{height:calc(100dvh - 63px)}body.onpdf .main{padding-bottom:0}
   .banner{bottom:24px;left:calc(50% + 48px)}
 }
 @media(max-width:600px){
@@ -176,6 +181,7 @@ td .del{min-height:36px;padding:0 12px;font-size:14px}td .del.sure{color:var(--r
 .kview{overflow:auto;background:linear-gradient(180deg,light-dark(#8fdcff,#16466b),light-dark(#c9efff,#0f2f4a));padding:10px;display:flex;-webkit-overflow-scrolling:touch}
 #kmap{max-width:none;margin:auto;flex:none}
 #kmap.placing .kt polygon{cursor:crosshair}.kb g{cursor:pointer}.kb g.sel{filter:drop-shadow(0 0 6px #ffd447)}
+.kb g{touch-action:none}#kmap.dragging,#kmap.dragging *{cursor:grabbing!important}
 .kpanel{overflow:auto;padding:14px 14px calc(14px + env(safe-area-inset-bottom));display:grid;gap:12px;align-content:start;border-left:1px solid var(--line)}
 .kh{margin:6px 0 0;font:600 18px Outfit,sans-serif}.kfoot{margin:0}
 .kcard{display:grid;gap:10px;border:1px solid var(--line);border-radius:18px;padding:14px 16px;background:var(--panel)}
@@ -195,6 +201,7 @@ button.sure{border-color:var(--red);color:var(--red)}
 @media(max-width:860px){.khome{grid-template-columns:minmax(0,1fr)}.kbody{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,42vh)}.kpanel{border-left:0;border-top:1px solid var(--line)}}
 .lb li.vis{cursor:pointer}.lb li.vis:hover{border-color:var(--vio)}.lb li.vis:focus-visible{outline:3px solid var(--vio)}
 .card.wide{max-width:900px}
+.ask{display:flex!important;overflow-y:auto}.ask[hidden]{display:none!important}.ask>.card{margin:auto}
 @media(max-width:860px){.kwrap{grid-template-columns:minmax(0,1fr)}}
 .lock{font-size:13px;color:var(--soft);white-space:nowrap}
 @media(max-width:760px){.timer,.buckets{grid-template-columns:minmax(0,1fr)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -205,7 +212,7 @@ button.sure{border-color:var(--red);color:var(--red)}
 </head>
 <body>
 <header class="appbar"><div class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z"/></svg><span>Study Stars</span></div><div class="acct" id="acct"></div></header>
-<nav class="tabbar" id="nav" aria-label="Sections"><button data-v="study" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg><span>Study</span></button><button data-v="progress" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Progress</span></button><button data-v="ranks" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/></svg><span>Ranks</span></button><button data-v="kingdom" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V10l2-1V6h2v2l3-2 3 2V6h2v3l2 1v11"/><path d="M10 21v-5h4v5"/></svg><span>Kingdom</span></button></nav>
+<nav class="tabbar" id="nav" aria-label="Sections"><button data-v="study" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg><span>Study</span></button><button data-v="progress" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Progress</span></button><button data-v="ranks" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/></svg><span>Ranks</span></button><button data-v="kingdom" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V10l2-1V6h2v2l3-2 3 2V6h2v3l2 1v11"/><path d="M10 21v-5h4v5"/></svg><span>Kingdom</span></button><button data-v="pdf" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5M9 13h6M9 17h6"/></svg><span>PDF</span></button></nav>
 <main class="main">
 <div class="view" data-view="study">
 <section class="band"><div class="wrap">
@@ -270,6 +277,7 @@ button.sure{border-color:var(--red);color:var(--red)}
   <div id="kgHome"></div>
 </div></section>
 </div>
+<div class="view pdfview" data-view="pdf" hidden><iframe id="pdfFrame" title="PDF Workbench" allow="clipboard-write"></iframe></div>
 </main>
 <div class="banner" id="banner" role="status"></div>
 
@@ -302,6 +310,15 @@ button.sure{border-color:var(--red);color:var(--red)}
   <p class="small" id="pInfo"></p>
   <div class="row"><button class="big" id="pSave" type="button">Save</button><button id="pOut" type="button">Sign out</button></div>
   <p class="err" id="pErr" role="alert"></p>
+  <div class="dz"><button class="dbtn" id="pDel" type="button">Delete my account</button>
+    <div id="delBox" hidden>
+      <p class="small">This permanently deletes your profile, all your study sessions, stars, leaderboard entry, Aca coins and kingdom. It can’t be undone.</p>
+      <div class="field" id="delPwRow"><label for="delPw">Your password</label><input id="delPw" type="password" autocomplete="current-password"></div>
+      <p class="small" id="delGHint">Google will ask you to sign in once more to confirm it’s you.</p>
+      <div class="field"><label for="delTxt">Type DELETE to confirm</label><input id="delTxt" autocomplete="off" autocapitalize="characters"></div>
+      <div class="row"><button class="dfill" id="delGo" type="button" disabled>Delete forever</button><button id="delNo" type="button">Cancel</button></div>
+      <p class="err" id="delErr" role="alert"></p>
+    </div></div>
 </div></div>
 
 <div class="ask" id="visit" hidden><div class="card wide" role="dialog" aria-labelledby="visH">
@@ -588,7 +605,7 @@ $('#authForm').addEventListener('submit',async e=>{e.preventDefault();const em=$
   busy(true);try{if(signup)await SScloud.emailUp(em,pw,nm.slice(0,30));else await SScloud.emailIn(em,pw);$('#pw').value='';closeM('#auth')}catch(err){aErr(err)}busy(false)});
 $('#forgot').addEventListener('click',async()=>{const em=$('#em').value.trim();if(!em){$('#authErr').textContent='Type your email above first, then click “Forgot password?”.';return}
   try{await SScloud.reset(em);$('#authErr').textContent='Password reset email sent — check your inbox (and spam).'}catch(e){aErr(e)}});
-function openProfile(){newPhoto=me.photo||'';$('#pName').value=me.name;$('#pPic').innerHTML=avatar(newPhoto,me.name,'avL');$('#pErr').textContent='';
+function openProfile(){$('#delBox').hidden=true;$('#pDel').hidden=false;$('#delTxt').value='';$('#delPw').value='';$('#delErr').textContent='';$('#delGo').disabled=true;newPhoto=me.photo||'';$('#pName').value=me.name;$('#pPic').innerHTML=avatar(newPhoto,me.name,'avL');$('#pErr').textContent='';
   const g=myStars(),L=levelOf(g);$('#pInfo').textContent=`${me.email?me.email+' · ':''}${g} stars · Level ${L.i+1}: ${L.name}`;openM('#prof')}
 function shrink(f){return new Promise((res,rej)=>{const u=URL.createObjectURL(f),im=new Image();
   im.onload=()=>{const s=160,c=document.createElement('canvas'),k=Math.min(im.width,im.height);c.width=c.height=s;
@@ -599,6 +616,16 @@ $('#pFile').addEventListener('change',async e=>{const f=e.target.files[0];e.targ
 $('#pRm').addEventListener('click',()=>{newPhoto='';$('#pPic').innerHTML=avatar('',$('#pName').value||me.name,'avL')});
 $('#pSave').addEventListener('click',async()=>{const n=$('#pName').value.trim().slice(0,30);if(!n){$('#pErr').textContent='Your name can’t be empty.';return}
   $('#pSave').disabled=true;try{await SScloud.saveProfile(n,newPhoto);me.name=n;me.photo=newPhoto;renderAcct();closeM('#prof')}catch(e){$('#pErr').textContent='Couldn’t save ('+(e.code||e.message)+').'}$('#pSave').disabled=false});
+$('#pDel').addEventListener('click',()=>{$('#pDel').hidden=true;$('#delBox').hidden=false;$('#delPwRow').hidden=!!me.google;$('#delGHint').hidden=!me.google;$('#delTxt').focus()});
+$('#delNo').addEventListener('click',()=>{$('#delBox').hidden=true;$('#pDel').hidden=false});
+$('#delTxt').addEventListener('input',()=>{$('#delGo').disabled=$('#delTxt').value.trim().toUpperCase()!=='DELETE'});
+const DERR={'auth/invalid-credential':'Wrong password.','auth/wrong-password':'Wrong password.','auth/missing-password':'Type your password.','auth/popup-closed-by-user':'Google sign-in was closed, so nothing was deleted.',
+  'auth/user-mismatch':'Please sign in with the same Google account.','auth/network-request-failed':'No internet connection.','auth/too-many-requests':'Too many tries. Wait a few minutes.','permission-denied':'Firebase blocked it. Update the security rules first, then try again.'};
+$('#delGo').addEventListener('click',async()=>{const b=$('#delGo');b.disabled=true;b.textContent='Deleting…';$('#delErr').textContent='';
+  try{const uid=await SScloud.deleteAccount($('#delPw').value);try{localStorage.removeItem('ss-acct-'+uid)}catch(e){}
+    closeM('#prof');banner('Your account and all its data have been deleted.')}
+  catch(e){$('#delErr').textContent=DERR[e.code]||'Couldn’t delete the account ('+(e.code||e.message)+').'}
+  b.textContent='Delete forever';b.disabled=$('#delTxt').value.trim().toUpperCase()!=='DELETE'});
 $('#pOut').addEventListener('click',async()=>{try{await SScloud.out()}catch(e){}closeM('#prof')});
 /* ---------- leaderboard ---------- */
 let lbData=null,lbWin=LS.get('ss-lbw','all');
@@ -624,6 +651,8 @@ $('#lb').addEventListener('click',e=>{if(e.target.closest('#lbSign')){setMode(fa
 const KB={"fence": {"n": ["Wooden Fence", "Stone Wall", "Iron Wall"], "c": [5, 15, 40], "s": [0, 5, 30]}, "tree": {"n": ["Tree", "Big Tree", "Cherry Blossom"], "c": [5, 15, 40], "s": [0, 5, 30]}, "well": {"n": ["Well", "Stone Well", "Fountain"], "c": [15, 45, 120], "s": [0, 15, 60]}, "house": {"n": ["Hut", "Stone House", "Manor"], "c": [20, 60, 150], "s": [0, 15, 60]}, "farm": {"n": ["Farm", "Big Farm", "Orchard"], "c": [25, 70, 160], "s": [0, 15, 60]}, "tower": {"n": ["Watchtower", "Stone Tower", "Wizard Tower"], "c": [40, 100, 250], "s": [5, 30, 100]}, "library": {"n": ["Library", "Grand Library", "University"], "c": [80, 200, 500], "s": [15, 60, 175]}, "statue": {"n": ["Star Statue", "Golden Statue", "Monument of Madness"], "c": [100, 300, 1000], "s": [30, 100, 600]}, "castle": {"n": ["Keep", "Castle", "Royal Palace"], "c": [300, 700, 1500], "s": [60, 175, 400]}};
 const KORDER=['fence','tree','well','house','farm','tower','library','statue','castle'];
 const KN=12,TW=64,TH=32,OX=KN*TW/2,OY=96,KD=18;
+const RES=['5_5','5_6','6_5','6_6'];
+let kDrag=null,kNoClick=false,kFixing=false;
 let kd=null,kSel=null,kPlace=null,kHover=null,kBusy=false,kOpen=false,kZoom=LS.get('ss-kz',1),bankN=1;
 function myStars(){const b=me&&lbData&&lbData.find(r=>r.id===me.uid);return b?Math.floor(((+b.imp||0)+(+b.min||0))/60):goldN()}
 const kReady=()=>kd?Math.max(0,myStars()-(+kd.conv||0)):0;
@@ -694,35 +723,60 @@ function sprite(k,t,cx,cy){let s='';
     break}
   }
   return s}
+function townHall(cx,cy,o,sfx){const lv=o?o.lv:0,t=lv>=7?2:lv>=4?1:0,wall=['#ffd99a','#e8eef7','#fff6e0'][t],rc=['#ff4d2e','#1f7ae0','#ffc400'][t];
+  let s=`<ellipse cx="${cx}" cy="${cy+6}" rx="${TW*.98}" ry="${TH*.9}" fill="#1b4d12" opacity=".2"/>`+prism(cx,cy,1.92,6,'#b9c7da')+dia(cx,cy,1.62,6,'#eef2f8');
+  const a=TW/2*1.2,b=TH/2*1.2;
+  s+=prism(cx,cy-2,1.2,34,wall,6);
+  const dx=cx-a*.5,dy=cy-2+b*.5-6;s+=`<polygon points="${P([[dx-6,dy-3],[dx+6,dy+3],[dx+6,dy-17],[dx-6,dy-23]])}" fill="#7a3e12"/><polygon points="${P([[dx-4,dy-4],[dx+4,dy],[dx+4,dy-14],[dx-4,dy-18]])}" fill="#a3561c"/>`;
+  for(const f of [.25,.75]){const wx=cx+a*f,wy=cy-2+b*(1-f)-24;s+=`<polygon points="${P([[wx-4,wy+2],[wx+4,wy-2],[wx+4,wy-10],[wx-4,wy-6]])}" fill="#ffe14d"/>`}
+  s+=roof(cx,cy-2,1.32,40,30,rc);
+  for(const [x,y] of [[cx-a-4,cy-2],[cx+a+4,cy-2]])s+=prism(x,y,.32,54,shade(wall,1.03),4)+roof(x,y,.4,58,18,rc);
+  const fx=cx+1,fy=cy-128,fw=48,fh=34,pth=`M${fx} ${fy} Q${fx+fw*.5} ${fy-6} ${fx+fw} ${fy} L${fx+fw} ${fy+fh} Q${fx+fw*.5} ${fy+fh-6} ${fx} ${fy+fh} Z`;
+  s+=`<line x1="${cx}" y1="${cy-70}" x2="${cx}" y2="${fy-6}" stroke="#5a4632" stroke-width="2.6"/><circle cx="${cx}" cy="${fy-7}" r="3.2" fill="#ffc400"/>`;
+  s+=`<clipPath id="fc${sfx}"><path d="${pth}"/></clipPath><path d="${pth}" fill="${o&&o.photo?'#fff':'#7d5bc4'}"/>`;
+  s+=o&&o.photo?`<image href="${esc(o.photo)}" x="${fx}" y="${fy-4}" width="${fw}" height="${fh+8}" preserveAspectRatio="xMidYMid slice" clip-path="url(#fc${sfx})"/>`
+    :`<text x="${fx+fw/2}" y="${fy+fh/2+6}" text-anchor="middle" font-size="18" font-weight="700" fill="#fff" font-family="Inter,sans-serif">${esc(((o&&o.name)||'?').trim().charAt(0).toUpperCase())}</text>`;
+  return s+`<path d="${pth}" fill="none" stroke="#4a3a2a" stroke-width="1.2"/>`}
+const thName=o=>['Town Hall','Stone Town Hall','Golden Town Hall'][o.lv>=7?2:o.lv>=4?1:0];
+const myOwner=()=>({photo:me?me.photo:'',name:me?me.name:'',lv:levelOf(myStars()).i});
 const hsh=(x,y)=>((x*73856093)^(y*19349663))>>>0;
-function mapSvg(b,live){
+function mapSvg(b,live,own){
   const Lc=[OX-KN*TW/2,OY+KN*TH/2],Bc=[OX,OY+KN*TH],Rc=[OX+KN*TW/2,OY+KN*TH/2];
   let g=`<polygon points="${P([Lc,Bc,[Bc[0],Bc[1]+KD],[Lc[0],Lc[1]+KD]])}" fill="#c4702f"/><polygon points="${P([Bc,Rc,[Rc[0],Rc[1]+KD],[Bc[0],Bc[1]+KD]])}" fill="#9a5222"/>`
     +`<polygon points="${P([[Lc[0],Lc[1]+KD-5],[Bc[0],Bc[1]+KD-5],[Bc[0],Bc[1]+KD],[Lc[0],Lc[1]+KD]])}" fill="#7a3f17"/><polygon points="${P([[Bc[0],Bc[1]+KD-5],[Rc[0],Rc[1]+KD-5],[Rc[0],Rc[1]+KD],[Bc[0],Bc[1]+KD]])}" fill="#5e2f10"/><g class="kt">`;
   for(let y=0;y<KN;y++)for(let x=0;x<KN;x++){const [cx,cy]=tc(x,y);g+=`<polygon data-k="${x}_${y}" points="${P([[cx-TW/2,cy],[cx,cy+TH/2],[cx+TW/2,cy],[cx,cy-TH/2]])}" fill="${(x+y)%2?'#5fd04a':'#6edb57'}"/>`}
   g+='</g><g style="pointer-events:none">';
-  for(let y=0;y<KN;y++)for(let x=0;x<KN;x++){if(b&&b[x+'_'+y])continue;const h=hsh(x,y);if(h%6)continue;const [cx,cy]=tc(x,y),col=['#ff5fa2','#ffe14d','#ffffff','#b388ff'][h%4];
+  for(let y=0;y<KN;y++)for(let x=0;x<KN;x++){if((b&&b[x+'_'+y])||RES.includes(x+'_'+y))continue;const h=hsh(x,y);if(h%6)continue;const [cx,cy]=tc(x,y),col=['#ff5fa2','#ffe14d','#ffffff','#b388ff'][h%4];
     g+=`<circle cx="${cx-6+h%9}" cy="${cy-2+h%5}" r="2" fill="${col}"/><circle cx="${cx+4-h%7}" cy="${cy+3-h%4}" r="1.6" fill="${col}"/>`}
   g+='</g><g id="kHi'+(live?'':'v')+'" style="pointer-events:none"></g><g class="kb">';
-  const keys=Object.keys(b||{}).filter(k=>Array.isArray(b[k])&&KB[b[k][0]]).map(k=>{const [x,y]=k.split('_').map(Number);return {k,x,y}}).sort((p,q)=>(p.x+p.y)-(q.x+q.y)||p.x-q.x);
-  for(const {k,x,y} of keys){const [cx,cy]=tc(x,y),[ty,tr]=b[k];g+=`<g data-k="${k}"${live&&k===kSel?' class="sel"':''}><title>${esc(KB[ty].n[tr])}</title>${sprite(ty,tr,cx,cy)}</g>`}
+  const keys=Object.keys(b||{}).filter(k=>Array.isArray(b[k])&&KB[b[k][0]]&&!RES.includes(k)).map(k=>{const [x,y]=k.split('_').map(Number);return {k,x,y}});
+  keys.push({th:1,x:5.5,y:5.5});keys.sort((p,q)=>(p.x+p.y)-(q.x+q.y)||p.x-q.x);
+  for(const it of keys){if(it.th){const [cx,cy]=tc(5.5,5.5),o=own||{};g+=`<g data-th="1"${live&&kSel==='TH'?' class="sel"':''}><title>${esc(thName({lv:o.lv||0}))}</title>${townHall(cx,cy,o,live?'L':'V')}</g>`;continue}
+    const {k,x,y}=it,[cx,cy]=tc(x,y),[ty,tr]=b[k];g+=`<g data-k="${k}"${live&&k===kSel?' class="sel"':''}${kDrag&&kDrag.on&&kDrag.from===k?' style="opacity:.3"':''}><title>${esc(KB[ty].n[tr])}</title>${sprite(ty,tr,cx,cy)}</g>`}
   return `<svg class="kmap" viewBox="0 0 ${KN*TW} ${OY+KN*TH+KD+8}" role="img" aria-label="Kingdom map">${g}</g>${live?'<g id="kGhost" opacity=".65" style="pointer-events:none"></g>':''}</svg>`;
 }
 const miniIcon=(ty,tr)=>`<svg class="ki" viewBox="-40 -92 80 112" aria-hidden="true">${dia(0,0,1,0,'#6edb57')}${sprite(ty,tr,0,0)}</svg>`;
 const bankIcon=()=>`<svg class="bki" viewBox="-44 -70 88 96" aria-hidden="true">${dia(0,0,1.1,0,'#6edb57')}${prism(0,0,.8,6,'#c3d0e3')}${prism(0,0,.7,26,'#fff4dc',6)}${roof(0,0,.8,32,14,'#ffc400')}<circle cx="0" cy="-36" r="6" fill="#ffc400" stroke="#b07800"/><text x="0" y="-33" text-anchor="middle" font-size="8" font-weight="700" fill="#6b4500" font-family="Inter,sans-serif">A</text></svg>`;
 function drawHover(){const hi=$('#kHi'),gh=$('#kGhost');if(!hi||!gh)return;hi.innerHTML='';gh.innerHTML='';
-  const k=kHover;if(!k)return;const [x,y]=k.split('_').map(Number),[cx,cy]=tc(x,y),taken=!!(kd&&kd.b[k]);
+  const k=kHover;if(!k)return;const [x,y]=k.split('_').map(Number),[cx,cy]=tc(x,y),pl=kPlace||(kDrag&&kDrag.on?{move:kDrag.from}:null),taken=!!(kd&&kd.b[k])||RES.includes(k);
   const poly=(f,o)=>`<polygon points="${P([[cx-TW/2,cy],[cx,cy+TH/2],[cx+TW/2,cy],[cx,cy-TH/2]])}" fill="${f}" opacity="${o}"/>`;
-  if(kPlace){const bad=taken;hi.innerHTML=poly(bad?'#ff3b3b':'#ffffff',.5);
-    if(!bad){const [ty,tr]=kPlace.move?kd.b[kPlace.move]:[kPlace.type,0];gh.innerHTML=sprite(ty,tr,cx,cy)}}
-  else hi.innerHTML=poly('#fff',.28)}
+  if(pl){const bad=taken&&k!==pl.move;hi.innerHTML=poly(bad?'#ff3b3b':'#ffffff',.5);
+    if(!bad&&(!pl.move||kd.b[pl.move])){const [ty,tr]=pl.move?kd.b[pl.move]:[pl.type,0];gh.innerHTML=sprite(ty,tr,cx,cy)}}
+  else if(!RES.includes(k))hi.innerHTML=poly('#fff',.28)}
+function tileAt(e){const svg=$('#kmap svg');if(!svg)return null;const m=svg.getScreenCTM();if(!m)return null;
+  const pt=new DOMPoint(e.clientX,e.clientY).matrixTransform(m.inverse()),dx=(pt.x-OX)/(TW/2),dy=(pt.y-OY-TH/2)/(TH/2),x=Math.round((dy+dx)/2),y=Math.round((dy-dx)/2);
+  return x>=0&&y>=0&&x<KN&&y<KN?x+'_'+y:null}
+const kFree=k=>k&&!RES.includes(k)&&!(kd&&kd.b[k]);
+function kNearestFree(){let best=null,bd=1e9;for(let y=0;y<KN;y++)for(let x=0;x<KN;x++){const k=x+'_'+y;if(!kFree(k))continue;const d=(x-5.5)**2+(y-5.5)**2;if(d<bd){bd=d;best=k}}return best}
+async function kFixReserved(){if(kFixing||!kd||!window.SScloud)return;const k=RES.find(r=>kd.b&&kd.b[r]);if(!k)return;const to=kNearestFree();if(!to)return;
+  const [ty,tr]=kd.b[k];kFixing=true;try{await SScloud.move(k,to);banner('Your '+KB[ty].n[tr]+' was moved to make room for the Town Hall.')}catch(e){}kFixing=false}
 /* main-page cards: kingdom preview + bank */
 function renderKHome(){const el=$('#kgHome'),ac=$('#aca');if(!el)return;
   if(!cloudOK){el.innerHTML='<p class="sub" style="margin-top:14px">Your kingdom needs an internet connection.</p>';ac.innerHTML='';return}
   if(!me){el.innerHTML='<div class="row" style="margin-top:14px"><span class="sub">Sign in to build your kingdom.</span><button id="kSign" type="button">Sign in</button></div>';ac.innerHTML='';return}
   if(!kd){el.innerHTML='<p class="sub" style="margin-top:14px">Opening your kingdom…</p>';ac.innerHTML='';return}
   const n=Object.keys(kd.b||{}).length,r=kReady();ac.innerHTML=coin()+' '+(+kd.aca||0)+' Aca';
-  el.innerHTML=`<div class="khome"><button class="kprev" id="kOpenBtn" type="button" aria-label="Open your kingdom">${mapSvg(kd.b,false)}<span class="kgo">Open kingdom</span></button>
+  el.innerHTML=`<div class="khome"><button class="kprev" id="kOpenBtn" type="button" aria-label="Open your kingdom">${mapSvg(kd.b,false,myOwner())}<span class="kgo">Open kingdom</span></button>
     <div class="bankc">${bankIcon()}<div><h3>Bank</h3><p class="sub">Exchange study stars for Aca coins. 1★ = 10 Aca.</p>
       <p class="bk2"><b>${r}★</b> ready to exchange · <b>${+kd.aca||0}</b> Aca saved</p><button class="big" id="bankOpen" type="button">Open bank</button></div></div></div>
     <p class="kmeta2">${n} building${n===1?'':'s'} · ${esc(levelOf(myStars()).name)}</p>`;
@@ -731,11 +785,13 @@ function renderKHome(){const el=$('#kgHome'),ac=$('#aca');if(!el)return;
 function renderKFS(){if(!kOpen)return;const fs=$('#kfs');if(!kd||!me){closeKingdom();return}
   const aca=+kd.aca||0,st=myStars(),nb=Object.keys(kd.b||{}).length;
   $('#aca2').innerHTML=coin()+' '+aca+' Aca';$('#kTitle').textContent=me.name+'’s kingdom';fs.classList.toggle('placing',!!kPlace);
-  $('#kview').innerHTML=`<div id="kmap" class="${kPlace?'placing':''}" style="width:${kZoom*100}%">${mapSvg(kd.b,true)}</div>`;
+  $('#kview').innerHTML=`<div id="kmap" class="${kPlace?'placing':''}" style="width:${kZoom*100}%">${mapSvg(kd.b,true,myOwner())}</div>`;
   let side='';const r=kReady();
   if(r)side+=`<button class="kcard tre" id="kBank2" type="button"><span><small class="sub">Bank</small><b>${r}★ ready → ${r*10} Aca</b></span><span class="sub">Open bank ›</span></button>`;
   if(kPlace){const nm=kPlace.move?KB[kd.b[kPlace.move][0]].n[kd.b[kPlace.move][1]]:KB[kPlace.type].n[0];
     side+=`<div class="kcard"><b>${kPlace.move?'Moving':'Placing'} ${esc(nm)}</b><span class="sub">Click a free tile on the map.${kPlace.move?'':' Cost: '+KB[kPlace.type].c[0]+' Aca each.'}</span><button id="kCancel" type="button">${kPlace.move?'Cancel move':'Done placing'}</button></div>`}
+  else if(kSel==='TH'){const o=myOwner();
+    side+=`<div class="kcard"><b>${esc(thName(o))}</b><span class="sub">The heart of your kingdom. Its flag shows your profile picture (change it by tapping your name at the top). It becomes a Stone Town Hall at Level 5 and a Golden Town Hall at Level 8.</span><button id="kDesel" type="button">Close</button></div>`}
   else if(kSel&&kd.b[kSel]){const [ty,tr]=kd.b[kSel],B=KB[ty],nx=tr+1;
     let up='';if(nx<3){const lk=st<B.s[nx],poor=aca<B.c[nx];
       up=lk?`<button disabled>Upgrade to ${esc(B.n[nx])} · needs ${B.s[nx]}★</button>`:poor?`<button disabled>Upgrade to ${esc(B.n[nx])} · ${B.c[nx]} Aca (need ${B.c[nx]-aca} more)</button>`:`<button class="big" id="kUp" type="button">Upgrade to ${esc(B.n[nx])} · ${B.c[nx]} Aca</button>`}
@@ -769,7 +825,18 @@ $('#kgHome').addEventListener('click',e=>{
   if(e.target.closest('#kSign')){setMode(false);openM('#auth');return}
   if(e.target.closest('#kOpenBtn'))openKingdom();
   if(e.target.closest('#bankOpen'))openBank()});
-$('#kfs').addEventListener('pointermove',e=>{const t=e.target.closest('#kmap [data-k]');const k=t?t.dataset.k:null;if(k!==kHover){kHover=k;drawHover()}});
+$('#kfs').addEventListener('pointerdown',e=>{if(kPlace||e.button>0)return;const g=e.target.closest('#kmap .kb [data-k]');if(!g)return;
+  kDrag={from:g.dataset.k,sx:e.clientX,sy:e.clientY,id:e.pointerId,on:false}});
+$('#kfs').addEventListener('pointermove',e=>{
+  if(kDrag&&!kDrag.on&&Math.hypot(e.clientX-kDrag.sx,e.clientY-kDrag.sy)>8){kDrag.on=true;try{$('#kview').setPointerCapture(kDrag.id)}catch(err){}
+    const g=$(`#kmap .kb [data-k="${kDrag.from}"]`);if(g)g.style.opacity='.3';$('#kmap').classList.add('dragging')}
+  if(kDrag&&kDrag.on)e.preventDefault();
+  const k=tileAt(e);if(k!==kHover){kHover=k;drawHover()}});
+function kEndDrag(e,cancel){const d=kDrag;kDrag=null;if(!d||!d.on)return;kNoClick=true;setTimeout(()=>kNoClick=false,50);
+  const to=cancel?null:tileAt(e);$('#kmap').classList.remove('dragging');
+  if(to&&to!==d.from&&kFree(to)){kSel=to;kDo(()=>SScloud.move(d.from,to),'Moved!')}else{renderKFS();if(to&&to!==d.from)banner('That spot is taken.',true)}}
+$('#kfs').addEventListener('pointerup',e=>kEndDrag(e,false));
+$('#kfs').addEventListener('pointercancel',e=>kEndDrag(e,true));
 $('#kfs').addEventListener('pointerleave',()=>{kHover=null;drawHover()});
 $('#kfs').addEventListener('click',async e=>{
   if(e.target.closest('#kBack')){closeKingdom();return}
@@ -784,8 +851,11 @@ $('#kfs').addEventListener('click',async e=>{
   const del=e.target.closest('#kDel');
   if(del){if(!del.classList.contains('sure')){del.classList.add('sure');del.textContent='Demolish? No refund';setTimeout(()=>{if(del.isConnected){del.classList.remove('sure');del.textContent='Demolish'}},3000);return}
     const k=kSel;kSel=null;await kDo(()=>SScloud.demolish(k));return}
-  const t=e.target.closest('#kmap [data-k]');if(!t)return;const k=t.dataset.k;
-  if(kPlace){if(kd.b[k])return;
+  if(kNoClick)return;
+  if(!e.target.closest('#kmap'))return;
+  if(!kPlace&&e.target.closest('#kmap [data-th]')){kSel='TH';renderKFS();return}
+  const bg=e.target.closest('#kmap .kb [data-k]'),k=kPlace?tileAt(e):(bg?bg.dataset.k:tileAt(e));if(!k)return;
+  if(kPlace){if(!kFree(k)){if(RES.includes(k))banner('The Town Hall stands there.',true);return}
     if(kPlace.move){const a=kPlace.move;kPlace=null;kSel=k;await kDo(()=>SScloud.move(a,k));return}
     const ty=kPlace.type,c=KB[ty].c[0];if((+kd.aca||0)<c){kPlace=null;renderKFS();return}
     const left=(+kd.aca||0)-c;await kDo(()=>SScloud.build(k,ty,c),KB[ty].n[0]+' built!');
@@ -799,12 +869,12 @@ document.addEventListener('keydown',e=>{if(e.key!=='Escape'||!kOpen||!$('#bankM'
 async function visit(uid){const r=lbData&&lbData.find(x=>x.id===uid);if(!r||!window.SScloud)return;
   $('#visH').textContent=r.name+'’s kingdom';$('#visMap').innerHTML='<p class="sub">Loading…</p>';openM('#visit');
   try{const k=await SScloud.visit(uid),n=Object.keys(k.b||{}).length,lv=levelOf(Math.floor(((+r.imp||0)+(+r.min||0))/60));
-    $('#visMap').innerHTML=mapSvg(k.b,false)+`<p class="kmeta">${n} building${n===1?'':'s'} · ${esc(lv.name)}</p>`}
+    $('#visMap').innerHTML=mapSvg(k.b,false,{photo:r.photo||'',name:r.name,lv:lv.i})+`<p class="kmeta">${n} building${n===1?'':'s'} · ${esc(lv.name)}</p>`}
   catch(e){$('#visMap').innerHTML='<p class="sub">Couldn’t open this kingdom ('+esc(e.code||e.message)+').</p>'}}
 $('#lb').addEventListener('click',e=>{const li=e.target.closest('[data-visit]');if(li)visit(li.dataset.visit)});
 $('#lb').addEventListener('keydown',e=>{const li=e.target.closest('[data-visit]');if(li&&(e.key==='Enter'||e.key===' ')){e.preventDefault();visit(li.dataset.visit)}});
 window.SS={store,banner,note,
-  kingdom(k){kd=k;if(kSel&&!(kd.b||{})[kSel])kSel=null;renderKingdom()},
+  kingdom(k){kd=k;if(kSel&&kSel!=='TH'&&!(kd.b||{})[kSel])kSel=null;renderKingdom();kFixReserved()},
   board(list){lbData=list;renderLb();renderBuckets();renderKingdom()},
   lb(t,ok){const n=$('#lbNote');n.hidden=false;n.textContent=t;n.className='lbn'+(ok?'':' bad')},
   offline:()=>LS.get('ss-stars',[]).filter(s=>s&&s.id&&s.end),
@@ -817,11 +887,12 @@ window.SS={store,banner,note,
 
 $('#bigp').setAttribute('d',starPath(100,106,94));
 /* ---------- app screens ---------- */
-const VIEWS=['study','progress','ranks','kingdom'];
+const VIEWS=['study','progress','ranks','kingdom','pdf'];
 function showView(v){if(!VIEWS.includes(v))v='study';
   for(const el of document.querySelectorAll('.view'))el.hidden=el.dataset.view!==v;
   for(const b of $('#nav').children)b.toggleAttribute('aria-current',false),b.dataset.v===v&&b.setAttribute('aria-current','page');
-  LS.set('ss-view',v);window.scrollTo(0,0);if(v==='progress')draw()}
+  LS.set('ss-view',v);window.scrollTo(0,0);if(v==='progress')draw();
+  document.body.classList.toggle('onpdf',v==='pdf');if(v==='pdf'&&!$('#pdfFrame').src)$('#pdfFrame').src='pdf.html'}
 $('#nav').addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(!b)return;if(location.hash!=='#'+b.dataset.v)location.hash=b.dataset.v;else showView(b.dataset.v)});
 window.addEventListener('hashchange',()=>showView(location.hash.slice(1)));
 $('#banner').addEventListener('click',()=>$('#banner').classList.remove('on'));

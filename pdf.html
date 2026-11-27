@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PDF Workbench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: calm, precise workshop tool
+   IDEA: a light table where printed sheets are laid out, turned, stamped and stacked
+   PICTURE: the page grid itself, white paper sheets on deep sea
+   COLOUR and TYPE: deep sea ground, white paper, sky controls, signal pink for selection; Hanken Grotesk
+   LAYOUT: modest title bar, sheet grid left, tool panel right; panel above the grid on narrow screens */
+:root{color-scheme:dark;--bg:#0a2540;--panel:#10304f;--panel2:#163a5f;--line:#24496e;--ink:#eef6ff;--mute:#9db7cf;--sky:#8fd3ff;--pink:#ff5c8a}
+:root[data-theme=light],:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Hanken Grotesk",system-ui,sans-serif;overflow-x:clip}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+header{display:flex;flex-wrap:wrap;gap:16px 24px;align-items:end;justify-content:space-between;padding:24px max(4vw,16px) 18px;border-bottom:1px solid var(--line)}
+h1{font-weight:300;font-size:clamp(30px,4vw,44px);line-height:1.05;margin:0;letter-spacing:-.01em}
+h1 b{font-weight:700}
+.sub{color:var(--mute);margin:6px 0 0;font-size:15px}
+.acts{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{min-height:44px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.btn:hover:not(:disabled){border-color:var(--sky)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.pri{background:var(--sky);color:#06213a;border-color:var(--sky);font-weight:700}
+.btn.danger:hover:not(:disabled){border-color:var(--pink);color:var(--pink)}
+.btn svg{width:18px;height:18px;flex:none}
+.fname{height:44px;width:200px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:#071c31;font-size:16px}
+main{display:grid;grid-template-columns:minmax(0,1fr) 350px;align-items:start}
+.board{padding:24px max(3vw,16px) 60px;min-height:70vh}
+.note{color:var(--mute);font-size:14px;margin:0 0 16px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.note .legend{display:inline-flex;align-items:center;gap:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
+.card{border-radius:12px;padding:10px 10px 6px;cursor:grab;border:2px solid transparent;background:rgba(255,255,255,.03);user-select:none;-webkit-user-select:none}
+.card:hover{background:rgba(143,211,255,.07)}
+.card.sel{border-color:var(--pink);background:rgba(255,92,138,.13)}
+.card.ghost{opacity:.35}
+.sheet{aspect-ratio:1/1.3;display:grid;place-items:center}
+.pg{position:relative;container-type:inline-size;background:#fff;box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 8px 20px rgba(0,0,0,.45);border-radius:2px;overflow:hidden}
+.pg canvas{display:block;width:100%;height:100%}
+.wm{position:absolute;inset:0;pointer-events:none}
+.wm span{position:absolute;white-space:nowrap;line-height:1;font-family:Arial,Helvetica,sans-serif;font-weight:700}
+.meta{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:14px}
+.dot{width:9px;height:9px;border-radius:50%;flex:none}
+.meta b{font-weight:600;margin-right:auto}
+.tools{display:flex;gap:2px}
+.tools button{width:34px;height:34px;border-radius:8px;border:0;background:transparent;display:grid;place-items:center;color:var(--mute)}
+.tools button:hover{background:var(--panel2);color:var(--ink)}
+.tools button[data-act=x]:hover{color:var(--pink)}
+.tools svg{width:17px;height:17px}
+.empty{border:2px dashed var(--line);border-radius:16px;padding:60px 20px;text-align:center;color:var(--mute)}
+.empty strong{display:block;color:var(--ink);font-size:22px;font-weight:600;margin-bottom:6px}
+aside{background:var(--panel);border-left:1px solid var(--line);min-height:calc(100vh - 110px);position:sticky;top:0}
+.tabs{display:flex;border-bottom:1px solid var(--line)}
+.tabs button{flex:1;min-height:50px;border:0;background:transparent;color:var(--mute);font-weight:600;border-bottom:3px solid transparent}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--sky)}
+.pane{padding:18px 20px 28px;display:grid;gap:18px}
+.pane[hidden]{display:none}
+.grp{display:grid;gap:8px}
+.grp>span{font-size:13px;color:var(--mute)}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.row .btn{flex:1 1 auto;justify-content:center}
+.chip{min-height:38px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:transparent}
+.chip:hover{border-color:var(--sky)}
+.info{font-size:15px}
+.info b{color:var(--sky)}
+label.f{display:grid;gap:6px;font-size:14px;color:var(--mute)}
+label.f input[type=text],label.f input[type=number],label.f select{height:44px;border-radius:10px;border:1px solid var(--line);background:#071c31;padding:0 12px;font-size:16px;color:var(--ink);width:100%}
+.rng{display:flex;align-items:center;gap:10px}
+.rng input{flex:1;accent-color:var(--sky)}
+.rng output{width:46px;text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.switch{display:flex;align-items:center;gap:10px;font-weight:600;min-height:44px;cursor:pointer}
+.switch input{width:22px;height:22px;accent-color:var(--pink)}
+input[type=color]{width:100%;height:44px;border:1px solid var(--line);border-radius:10px;background:#071c31;padding:4px}
+.plan{background:#071c31;border-radius:10px;padding:12px 14px;font-size:14px;color:var(--mute)}
+.plan ol{margin:6px 0 0;padding-left:20px;max-height:180px;overflow:auto;color:var(--ink)}
+.plan .err{color:var(--pink)}
+.hint{font-size:13px;color:var(--mute);margin:0}
+#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:var(--ink);color:#06213a;padding:12px 18px;border-radius:10px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;max-width:min(92vw,520px);text-align:center;z-index:9}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+body.drop .board{outline:3px dashed var(--sky);outline-offset:-12px}
+@media(max-width:900px){main{grid-template-columns:minmax(0,1fr)}aside{order:-1;position:static;min-height:0;border-left:0;border-bottom:1px solid var(--line)}}
+@media(max-width:600px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.fname{width:100%}.acts{width:100%}.acts .btn{flex:1;justify-content:center}header{align-items:start}}
+@media(prefers-reduced-motion:reduce){#toast{transition:none}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head><body>
+<header>
+  <div><h1><b>PDF</b> Workbench</h1><p class="sub">Reorder, rotate, watermark and split PDF pages. Everything runs in your browser; files never leave your device.</p></div>
+  <div class="acts">
+    <input type="file" id="fileIn" accept="application/pdf,.pdf" multiple hidden>
+    <button class="btn" id="addBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Add PDFs</button>
+    <button class="btn" id="undoBtn" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>Undo</button>
+    <input class="fname" id="fname" aria-label="Output file name" value="edited.pdf">
+    <button class="btn pri" id="dlBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Download PDF</button>
+  </div>
+</header>
+<main>
+  <section class="board" id="board">
+    <p class="note" id="note"></p>
+    <div class="empty" id="empty" hidden><strong>Drop PDF files here</strong>or use “Add PDFs”. Several files are merged in the order you add them.</div>
+    <div class="grid" id="grid"></div>
+  </section>
+  <aside>
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="pages">Pages</button>
+      <button role="tab" aria-selected="false" data-tab="wm">Watermark</button>
+      <button role="tab" aria-selected="false" data-tab="split">Split</button>
+    </div>
+    <div class="pane" id="tab-pages">
+      <div class="info" id="info"></div>
+      <div class="grp"><span>Select</span><div class="row">
+        <button class="chip" data-sel="all">All</button><button class="chip" data-sel="none">None</button><button class="chip" data-sel="odd">Odd</button><button class="chip" data-sel="even">Even</button><button class="chip" data-sel="inv">Invert</button></div>
+        <p class="hint">Click a page to select it, Shift-click for a range. Drag pages to reorder.</p></div>
+      <div class="grp"><span>Selected pages</span><div class="row">
+        <button class="btn sb" data-op="rl">Rotate left</button><button class="btn sb" data-op="rr">Rotate right</button>
+        <button class="btn sb" data-op="start">Move to start</button><button class="btn sb" data-op="end">Move to end</button>
+        <button class="btn sb" data-op="dup">Duplicate</button><button class="btn sb danger" data-op="del">Delete</button>
+        <button class="btn sb" data-op="extract">Extract to new PDF</button></div></div>
+      <div class="grp"><span>Whole document</span><div class="row">
+        <button class="btn" data-op="rall">Rotate all right</button><button class="btn" data-op="rev">Reverse order</button><button class="btn danger" data-op="clear">Remove all</button></div></div>
+    </div>
+    <div class="pane" id="tab-wm" hidden>
+      <label class="switch"><input type="checkbox" id="wmOn"> Add watermark to output</label>
+      <label class="f">Text<input type="text" id="wmText" value="CONFIDENTIAL" maxlength="80"></label>
+      <div class="two">
+        <label class="f">Layout<select id="wmLayout"><option value="center">Centre</option><option value="tiled">Tiled</option><option value="top">Top</option><option value="bottom">Bottom</option></select></label>
+        <label class="f">Colour<input type="color" id="wmColor" value="#d0021b"></label>
+      </div>
+      <label class="f">Size (pt)<span class="rng"><input type="range" id="wmSize" min="10" max="160" value="64"><output id="oSize">64</output></span></label>
+      <label class="f">Opacity (%)<span class="rng"><input type="range" id="wmOp" min="5" max="100" value="25"><output id="oOp">25</output></span></label>
+      <label class="f">Angle (°)<span class="rng"><input type="range" id="wmAng" min="-90" max="90" step="5" value="45"><output id="oAng">45</output></span></label>
+      <label class="f">Apply to<select id="wmScope"><option value="all">All pages</option><option value="sel">Selected pages only</option></select></label>
+      <p class="hint">The preview on each page matches the output. Watermark text supports Latin letters, digits and punctuation.</p>
+    </div>
+    <div class="pane" id="tab-split" hidden>
+      <label class="f">Split into<select id="sMode"><option value="each">One file per page</option><option value="n">Chunks of N pages</option><option value="ranges">Custom ranges</option></select></label>
+      <label class="f" id="sNwrap" hidden>Pages per file<input type="number" id="sN" min="1" value="2"></label>
+      <label class="f" id="sRwrap" hidden>Ranges (current page numbers)<input type="text" id="sR" value="1-2, 3, 4-6" placeholder="1-3, 4, 5-8"></label>
+      <div class="plan" id="plan"></div>
+      <button class="btn pri" id="splitBtn">Split &amp; download</button>
+      <p class="hint">Rotation, order and watermark settings are kept in every part. Several parts download together as a .zip.</p>
+    </div>
+  </aside>
+</main>
+<div id="toast" role="status"></div>
+<script>
+{
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const {PDFDocument,degrees,rgb,StandardFonts}=PDFLib;
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+const COLORS=['#8fd3ff','#ff5c8a','#ffd166','#7ee0b5','#c3a6ff','#ffa36c'];
+const IC={l:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4v6h6"/><path d="M3.5 10A9 9 0 1 1 6 18.5"/></svg>',
+r:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 4v6h-6"/><path d="M20.5 10A9 9 0 1 0 18 18.5"/></svg>',
+x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg>'};
+let files=[],pages=[],uid=0,hist=[],lastClick=-1,busy=false;
+const thumbs=new Map();
+const wm={on:false,text:'CONFIDENTIAL',size:64,opacity:.25,angle:45,color:'#d0021b',layout:'center',scope:'all'};
+const POS={center:[[.5,.5]],top:[[.5,.07]],bottom:[[.5,.93]],tiled:[]};
+for(let r=0;r<4;r++)for(let c=0;c<3;c++)POS.tiled.push([(c*2+1)/6+(r%2?.07:-.07),(r*2+1)/8]);
+
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),3200)}
+function snapshot(){hist.push(pages.map(p=>({...p})));if(hist.length>60)hist.shift();$('#undoBtn').disabled=false}
+function undo(){if(!hist.length)return;pages=hist.pop();$('#undoBtn').disabled=!hist.length;render()}
+const sel=()=>pages.filter(p=>p.sel);
+const visDims=p=>((p.base+p.rot)%180?[p.h,p.w]:[p.w,p.h]);
+
+function render(){
+  $('#empty').hidden=pages.length>0;
+  $('#grid').innerHTML=pages.map((p,k)=>{const [vw,vh]=visDims(p),ar=vw/vh,wp=ar>=1/1.3?100:ar*130;
+    return `<div class="card${p.sel?' sel':''}" data-id="${p.id}"><div class="sheet"><div class="pg" style="width:${wp.toFixed(2)}%;aspect-ratio:${vw}/${vh}"><canvas></canvas><div class="wm"></div></div></div>
+    <div class="meta"><span class="dot" style="background:${files[p.f].color}"></span><b>${k+1}</b><span class="tools"><button data-act="l" aria-label="Rotate page ${k+1} left">${IC.l}</button><button data-act="r" aria-label="Rotate page ${k+1} right">${IC.r}</button><button data-act="x" aria-label="Delete page ${k+1}">${IC.x}</button></span></div></div>`}).join('');
+  pages.forEach(paintCard);paintWM();updateInfo();
+}
+function paintCard(p){
+  const el=$(`.card[data-id="${p.id}"] canvas`),t=thumbs.get(p.id);if(!el||!t)return;
+  const r=p.rot%360,sw=t.width,sh=t.height,odd=r%180;el.width=odd?sh:sw;el.height=odd?sw:sh;
+  const x=el.getContext('2d');x.translate(el.width/2,el.height/2);x.rotate(r*Math.PI/180);x.drawImage(t,-sw/2,-sh/2);
+}
+function paintWM(){
+  const show=wm.on&&wm.text.trim();
+  pages.forEach(p=>{const box=$(`.card[data-id="${p.id}"] .wm`);if(!box)return;
+    if(!show||(wm.scope==='sel'&&!p.sel)){box.innerHTML='';return}
+    const fs=(wm.size/visDims(p)[0]*100).toFixed(3);
+    box.innerHTML=POS[wm.layout].map(([u,v])=>`<span style="left:${u*100}%;top:${v*100}%;font-size:${fs}cqw;color:${wm.color};opacity:${wm.opacity};transform:translate(-50%,-50%) rotate(${-wm.angle}deg)">${esc(wm.text)}</span>`).join('');
+  });
+}
+function updateInfo(){
+  const n=pages.length,s=sel().length,fc=new Set(pages.map(p=>p.f)).size;
+  $('#info').innerHTML=n?`<b>${n}</b> page${n>1?'s':''} from ${fc} file${fc>1?'s':''} · <b>${s}</b> selected`:'No pages yet';
+  $$('.sb').forEach(b=>b.disabled=!s);$('#dlBtn').disabled=!n;$('#splitBtn').disabled=!n;
+  const used=[...new Set(pages.map(p=>p.f))];
+  $('#note').innerHTML=(files.some(f=>f.sample)&&used.every(f=>files[f].sample)?'<span>Sample pages loaded so you can try things out. Add your own PDFs to replace them.</span>':'')+
+    (used.length>1?used.map(f=>`<span class="legend"><span class="dot" style="background:${files[f].color}"></span>${esc(files[f].name)}</span>`).join(''):'');
+  plan();
+}
+
+async function addFile(name,bytes,isSample){
+  let lib,doc;
+  try{lib=await PDFDocument.load(bytes,{ignoreEncryption:true});doc=await pdfjsLib.getDocument({data:bytes.slice()}).promise}
+  catch(e){toast(`Couldn’t open ${name}. It may be damaged or password-protected.`);return}
+  const f=files.length;files.push({name,lib,color:COLORS[f%COLORS.length],sample:!!isSample});
+  const fresh=[];
+  for(let i=0;i<lib.getPageCount();i++){const lp=lib.getPage(i),{width,height}=lp.getSize();
+    fresh.push({id:++uid,f,i,rot:0,base:((lp.getRotation().angle%360)+360)%360,w:width,h:height,sel:false})}
+  if(!isSample){snapshot();if(pages.length&&pages.every(p=>files[p.f].sample))pages=[];
+    if(!files.some(x=>!x.sample&&x!==files[f]))$('#fname').value=name.replace(/\.pdf$/i,'')+'-edited.pdf'}
+  pages.push(...fresh);render();
+  for(const p of fresh){try{const pg=await doc.getPage(p.i+1),v0=pg.getViewport({scale:1}),s=Math.min(2,280/Math.max(v0.width,v0.height)),vp=pg.getViewport({scale:s});
+    const c=document.createElement('canvas');c.width=Math.ceil(vp.width);c.height=Math.ceil(vp.height);
+    await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;thumbs.set(p.id,c);
+    pages.filter(q=>q.f===p.f&&q.i===p.i).forEach(q=>{thumbs.set(q.id,c);paintCard(q)})}catch(e){}}
+}
+async function addFiles(list){
+  const pdfs=[...list].filter(f=>/pdf$/i.test(f.type)||/\.pdf$/i.test(f.name));
+  if(!pdfs.length){toast('Please choose PDF files');return}
+  for(const f of pdfs)await addFile(f.name,new Uint8Array(await f.arrayBuffer()));
+}
+
+function hexRgb(h){const n=parseInt(h.slice(1),16);return[(n>>16&255)/255,(n>>8&255)/255,(n&255)/255]}
+function stamp(cp,p,font){
+  const r=(p.base+p.rot)%360,b=cp.getMediaBox(),W=b.width,H=b.height,tw=font.widthOfTextAtSize(wm.text,wm.size),th=wm.size*.72,ang=wm.angle+r,t=ang*Math.PI/180;
+  for(const [u,v] of POS[wm.layout]){let x,y;
+    if(r===0){x=u*W;y=(1-v)*H}else if(r===90){x=v*W;y=u*H}else if(r===180){x=(1-u)*W;y=v*H}else{x=(1-v)*W;y=(1-u)*H}
+    x+=b.x;y+=b.y;
+    cp.drawText(wm.text,{x:x-(Math.cos(t)*tw/2-Math.sin(t)*th/2),y:y-(Math.sin(t)*tw/2+Math.cos(t)*th/2),size:wm.size,font,color:rgb(...hexRgb(wm.color)),opacity:wm.opacity,rotate:degrees(ang)})}
+}
+async function buildDoc(list){
+  const out=await PDFDocument.create();
+  const font=wm.on&&wm.text.trim()?await out.embedFont(StandardFonts.HelveticaBold):null;
+  if(font)font.widthOfTextAtSize(wm.text,10);
+  const byFile=new Map();list.forEach((p,k)=>{if(!byFile.has(p.f))byFile.set(p.f,[]);byFile.get(p.f).push(k)});
+  const cps=new Array(list.length);
+  for(const [f,ks] of byFile){const c=await out.copyPages(files[f].lib,ks.map(k=>list[k].i));ks.forEach((k,j)=>cps[k]=c[j])}
+  cps.forEach((cp,k)=>{const p=list[k];out.addPage(cp);cp.setRotation(degrees((p.base+p.rot)%360));if(font&&(wm.scope==='all'||p.sel))stamp(cp,p,font)});
+  return new Blob([await out.save()],{type:'application/pdf'});
+}
+async function saveFile(name,blob){
+  try{if(window.claude&&claude.use){const d=await claude.use('downloads');if(d){await d.save({filename:name,data:blob});toast(`Saved ${name}`);return}}}
+  catch(e){if(e&&e.code==='declined'){toast('Download cancelled');return}if(e&&e.code==='rate_limited'){toast('A download prompt is already open');return}
+    if(e&&e.code==='host_unavailable'){toast('This app can’t save files. Open the page in a browser to download.');return}}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);
+}
+const baseName=()=>{let n=$('#fname').value.trim()||'edited.pdf';return /\.pdf$/i.test(n)?n:n+'.pdf'};
+async function run(label,fn){
+  if(busy)return;busy=true;const btns=$$('.btn');btns.forEach(b=>b.dataset.d=b.disabled);btns.forEach(b=>b.disabled=true);toast(label);
+  try{await fn()}catch(e){toast(/WinAnsi|cannot encode/i.test(String(e&&e.message))?'Watermark text has characters the PDF font can’t draw. Use Latin letters, digits and punctuation.':'Something went wrong: '+(e&&e.message||e))}
+  finally{busy=false;btns.forEach(b=>b.disabled=b.dataset.d==='true');updateInfo()}
+}
+const download=()=>pages.length&&run('Building PDF…',async()=>saveFile(baseName(),await buildDoc(pages)));
+
+function groups(){
+  const n=pages.length,m=$('#sMode').value;
+  if(m==='each')return pages.map(p=>[p]);
+  if(m==='n'){const k=Math.max(1,parseInt($('#sN').value)||1),g=[];for(let i=0;i<n;i+=k)g.push(pages.slice(i,i+k));return g}
+  const g=[];for(const part of $('#sR').value.split(',')){const s=part.trim();if(!s)continue;const mm=s.match(/^(\d+)\s*(?:[-–]\s*(\d+))?$/);
+    if(!mm)throw new Error(`“${s}” isn’t a page number or range`);let a=+mm[1],b=mm[2]?+mm[2]:a;if(a>b)[a,b]=[b,a];
+    if(a<1||b>n)throw new Error(`${s} is outside pages 1–${n}`);g.push(pages.slice(a-1,b))}
+  if(!g.length)throw new Error('Enter ranges like 1-3, 4, 5-8');return g;
+}
+const lab=g=>{const a=pages.indexOf(g[0])+1,b=pages.indexOf(g[g.length-1])+1;return a===b?`Page ${a}`:`Pages ${a}–${b}`};
+function plan(){
+  $('#sNwrap').hidden=$('#sMode').value!=='n';$('#sRwrap').hidden=$('#sMode').value!=='ranges';
+  if(!pages.length){$('#plan').textContent='Add a PDF to split it.';return}
+  try{const g=groups();$('#plan').innerHTML=`Creates <b style="color:var(--ink)">${g.length}</b> file${g.length>1?'s':''}${g.length>1?' in a .zip':''}<ol>${g.map(x=>`<li>${lab(x)}</li>`).join('')}</ol>`;$('#splitBtn').disabled=false}
+  catch(e){$('#plan').innerHTML=`<span class="err">${esc(e.message)}</span>`;$('#splitBtn').disabled=true}
+}
+$('#splitBtn').onclick=()=>run('Splitting…',async()=>{
+  const g=groups(),stem=baseName().replace(/\.pdf$/i,'');
+  if(g.length===1)return saveFile(`${stem}-part1.pdf`,await buildDoc(g[0]));
+  const z=new JSZip(),w=String(g.length).length;
+  for(let i=0;i<g.length;i++)z.file(`${stem}-part${String(i+1).padStart(w,'0')}.pdf`,await buildDoc(g[i]));
+  await saveFile(`${stem}-split.zip`,await z.generateAsync({type:'blob'}));
+});
+
+function op(o){
+  const s=sel();
+  if(o==='extract')return run('Building PDF…',async()=>saveFile(baseName().replace(/\.pdf$/i,'')+'-extract.pdf',await buildDoc(s)));
+  if(o==='clear'&&!pages.length)return;
+  snapshot();
+  if(o==='rl')s.forEach(p=>p.rot=(p.rot+270)%360);
+  else if(o==='rr')s.forEach(p=>p.rot=(p.rot+90)%360);
+  else if(o==='rall')pages.forEach(p=>p.rot=(p.rot+90)%360);
+  else if(o==='del'){pages=pages.filter(p=>!p.sel);toast(`Deleted ${s.length} page${s.length>1?'s':''}. Undo is available.`)}
+  else if(o==='start')pages=[...s,...pages.filter(p=>!p.sel)];
+  else if(o==='end')pages=[...pages.filter(p=>!p.sel),...s];
+  else if(o==='rev')pages.reverse();
+  else if(o==='clear'){pages=[];toast('All pages removed. Undo is available.')}
+  else if(o==='dup'){const out=[];pages.forEach(p=>{out.push(p);if(p.sel){const c={...p,id:++uid,sel:false};thumbs.set(c.id,thumbs.get(p.id));out.push(c)}});pages=out}
+  render();
+}
+$$('[data-op]').forEach(b=>b.onclick=()=>op(b.dataset.op));
+$$('[data-sel]').forEach(b=>b.onclick=()=>{const m=b.dataset.sel;pages.forEach((p,k)=>p.sel=m==='all'?true:m==='none'?false:m==='odd'?k%2===0:m==='even'?k%2===1:!p.sel);render()});
+
+$('#grid').addEventListener('click',e=>{
+  const card=e.target.closest('.card');if(!card)return;const k=pages.findIndex(p=>p.id===+card.dataset.id),p=pages[k];if(!p)return;
+  const b=e.target.closest('button');
+  if(b){snapshot();const a=b.dataset.act;if(a==='l')p.rot=(p.rot+270)%360;else if(a==='r')p.rot=(p.rot+90)%360;else pages.splice(k,1);render();return}
+  if(e.shiftKey&&lastClick>=0&&lastClick<pages.length){const [a,z]=[Math.min(lastClick,k),Math.max(lastClick,k)];for(let i=a;i<=z;i++)pages[i].sel=true}else p.sel=!p.sel;
+  lastClick=k;card.classList.toggle('sel',p.sel);if(e.shiftKey)render();else{paintWM();updateInfo()}
+});
+new Sortable($('#grid'),{animation:160,delay:140,delayOnTouchOnly:true,filter:'button',preventOnFilter:false,ghostClass:'ghost',
+  onEnd(e){if(e.oldIndex===e.newIndex)return;snapshot();const [m]=pages.splice(e.oldIndex,1);pages.splice(e.newIndex,0,m);render()}});
+
+$$('.tabs button').forEach(b=>b.onclick=()=>{$$('.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  ['pages','wm','split'].forEach(t=>$('#tab-'+t).hidden=t!==b.dataset.tab);if(b.dataset.tab==='wm'&&!wm.on){wm.on=true;$('#wmOn').checked=true;paintWM()}});
+const bindWM=()=>{wm.on=$('#wmOn').checked;wm.text=$('#wmText').value;wm.layout=$('#wmLayout').value;wm.color=$('#wmColor').value;
+  wm.size=+$('#wmSize').value;wm.opacity=$('#wmOp').value/100;wm.angle=+$('#wmAng').value;wm.scope=$('#wmScope').value;
+  $('#oSize').textContent=wm.size;$('#oOp').textContent=$('#wmOp').value;$('#oAng').textContent=wm.angle;paintWM()};
+['wmOn','wmText','wmLayout','wmColor','wmSize','wmOp','wmAng','wmScope'].forEach(id=>$('#'+id).addEventListener('input',bindWM));
+['sMode','sN','sR'].forEach(id=>$('#'+id).addEventListener('input',plan));
+
+$('#addBtn').onclick=()=>$('#fileIn').click();
+$('#fileIn').onchange=e=>{addFiles(e.target.files);e.target.value=''};
+$('#undoBtn').onclick=undo;$('#dlBtn').onclick=download;
+const hasFiles=e=>e.dataTransfer&&[...e.dataTransfer.types].includes('Files');
+addEventListener('dragover',e=>{if(hasFiles(e)){e.preventDefault();document.body.classList.add('drop')}});
+addEventListener('dragleave',e=>{if(!e.relatedTarget)document.body.classList.remove('drop')});
+addEventListener('drop',e=>{document.body.classList.remove('drop');if(hasFiles(e)){e.preventDefault();addFiles(e.dataTransfer.files)}});
+addEventListener('keydown',e=>{if(/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName))return;
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();undo()}
+  else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='a'){e.preventDefault();pages.forEach(p=>p.sel=true);render()}
+  else if((e.key==='Delete'||e.key==='Backspace')&&sel().length){e.preventDefault();op('del')}});
+
+async function sample(){
+  const d=await PDFDocument.create(),f=await d.embedFont(StandardFonts.HelveticaBold),f2=await d.embedFont(StandardFonts.Helvetica);
+  const tint=[[.56,.83,1],[1,.36,.54],[1,.82,.4],[.49,.88,.71],[.76,.65,1],[1,.64,.42]];
+  for(let i=0;i<6;i++){const pg=d.addPage(i===3?[842,595]:[595,842]),{width:W,height:H}=pg.getSize();
+    pg.drawRectangle({x:0,y:H-130,width:W,height:130,color:rgb(...tint[i])});
+    pg.drawText(i===3?'Landscape sample':'Sample page '+(i+1),{x:48,y:H-84,size:36,font:f,color:rgb(.04,.15,.25)});
+    pg.drawText('Generated in your browser for trying the tools',{x:48,y:H-112,size:14,font:f2,color:rgb(.04,.15,.25)});
+    for(let l=0;l<(i===3?10:16);l++)pg.drawRectangle({x:48,y:H-190-l*30,width:(W-96)*(l%4===3?.55:1),height:10,color:rgb(.86,.89,.93)});
+    pg.drawText(String(i+1),{x:W-130,y:50,size:110,font:f,color:rgb(...tint[i])})}
+  return d.save();
+}
+render();
+sample().then(b=>addFile('Sample.pdf',b,true));
+}
+</script>
+</body></html>
