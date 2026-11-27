@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#5b3fa8">
 <title>Study Stars</title>
 <link rel="manifest" href="manifest.webmanifest">
@@ -53,9 +53,9 @@ button:disabled{opacity:.45;cursor:not-allowed}
 input{min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 12px;width:100%}
 .mins{display:flex;align-items:center;gap:8px}.mins input{width:84px;text-align:center}
 .info{margin:0;font-size:15px;color:var(--soft)}
-.banner{display:none;padding:14px 18px;border-radius:14px;background:var(--gold2);font-weight:500}
+.banner{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:45;width:min(560px,calc(100vw - 24px));display:none;padding:14px 18px;border-radius:16px;background:var(--gold2);color:var(--ink);font-weight:500;box-shadow:0 10px 30px rgba(0,0,0,.25);cursor:pointer}
 .banner.bad{background:var(--red2)}
-.banner.on{display:block;animation:pop .5s ease}
+.banner.on{display:block;animation:pop .4s ease}
 @keyframes pop{0%{transform:scale(.94);opacity:0}100%{transform:none;opacity:1}}
 .buckets{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
 .bk{display:flex;gap:18px;align-items:center;border:1px solid var(--line);border-radius:20px;padding:16px 20px}
@@ -135,6 +135,30 @@ td .del{min-height:36px;padding:0 12px;font-size:14px}td .del.sure{color:var(--r
 .lb .gap{border:0;padding:0 14px;color:var(--soft);display:block}
 .lbn{margin:12px 0 0;padding:10px 14px;border-radius:12px;background:var(--vio2);font-size:14px}.lbn.bad{background:var(--red2);color:var(--red)}
 .aca{display:inline-flex;align-items:center;gap:8px;font:600 20px Outfit,sans-serif;padding:6px 14px;border-radius:24px;background:var(--gold2)}.aca svg{width:22px;height:22px}
+.appbar{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:calc(8px + env(safe-area-inset-top)) max(4vw,14px) 8px;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:8px;font:600 20px Outfit,sans-serif}.brand svg{width:26px;height:26px;fill:var(--gold)}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--bg);border-top:1px solid var(--line);padding:4px 4px calc(4px + env(safe-area-inset-bottom))}
+.tabbar button{border:0;background:none;display:grid;justify-items:center;gap:2px;min-height:58px;padding:6px 2px;border-radius:14px;color:var(--soft);font-size:12px;font-weight:600}
+.tabbar svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tabbar button[aria-current=page]{color:var(--vio);background:var(--vio2)}
+.main{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+.view[hidden]{display:none}
+.view .band:first-child{padding-top:clamp(16px,3vw,36px)}
+@media(min-width:900px){
+  .tabbar{top:0;right:auto;width:96px;grid-template-columns:none;grid-auto-rows:min-content;align-content:start;gap:6px;padding:76px 8px 8px;border-top:0;border-right:1px solid var(--line)}
+  .tabbar button{min-height:68px;font-size:13px}
+  .appbar{margin-left:96px}.main{margin-left:96px;padding-bottom:24px}
+  .banner{bottom:24px;left:calc(50% + 48px)}
+}
+@media(max-width:600px){
+  h1{font-size:26px}.view .top{margin-bottom:12px}
+  .timer{padding:18px;gap:18px}.ring{width:min(78vw,300px)}
+  .ctl{gap:14px}.ctl .big{flex:1 1 auto}
+  .bk{padding:12px 14px;gap:12px}.bk b{font-size:36px}
+  .kfs.placing .kshop,.kfs.placing .kh,.kfs.placing .kfoot,.kfs.placing .kcard.tre{display:none}
+  .kfs.placing .kbody{grid-template-rows:minmax(0,1fr) auto}
+  .kbar{gap:6px;padding:calc(6px + env(safe-area-inset-top)) 10px 6px}.kbar>b{font-size:17px;flex-basis:40%}.kbar button{min-height:40px;padding:0 12px}.kbar .aca{font-size:16px;padding:4px 10px}
+}
 .khome{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;margin-top:16px}
 .kprev{position:relative;display:block;width:100%;padding:8px;border:0;border-radius:22px;background:linear-gradient(180deg,light-dark(#8fdcff,#16466b),light-dark(#c9efff,#0f2f4a));cursor:pointer;min-height:0}
 .kprev:hover{filter:brightness(1.04)}.kprev .kmap{width:100%;height:auto;display:block}
@@ -149,10 +173,10 @@ td .del{min-height:36px;padding:0 12px;font-size:14px}td .del.sure{color:var(--r
 .kbar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding:10px max(2vw,12px);border-bottom:1px solid var(--line);background:var(--bg)}
 .kbar>b{font:600 20px Outfit,sans-serif;flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kbtns{display:flex;gap:6px;flex-wrap:wrap}
 .kbody{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,360px);min-height:0}
-.kview{overflow:auto;background:linear-gradient(180deg,light-dark(#8fdcff,#16466b),light-dark(#c9efff,#0f2f4a));padding:10px;display:grid;place-items:center}
-#kmap{max-width:none}.kview #kmap{min-width:100%}
+.kview{overflow:auto;background:linear-gradient(180deg,light-dark(#8fdcff,#16466b),light-dark(#c9efff,#0f2f4a));padding:10px;display:flex;-webkit-overflow-scrolling:touch}
+#kmap{max-width:none;margin:auto;flex:none}
 #kmap.placing .kt polygon{cursor:crosshair}.kb g{cursor:pointer}.kb g.sel{filter:drop-shadow(0 0 6px #ffd447)}
-.kpanel{overflow:auto;padding:14px;display:grid;gap:12px;align-content:start;border-left:1px solid var(--line)}
+.kpanel{overflow:auto;padding:14px 14px calc(14px + env(safe-area-inset-bottom));display:grid;gap:12px;align-content:start;border-left:1px solid var(--line)}
 .kh{margin:6px 0 0;font:600 18px Outfit,sans-serif}.kfoot{margin:0}
 .kcard{display:grid;gap:10px;border:1px solid var(--line);border-radius:18px;padding:14px 16px;background:var(--panel)}
 button.kcard.tre{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--gold2);border-color:transparent;text-align:left;min-height:56px;width:100%}
@@ -180,9 +204,12 @@ button.sure{border-color:var(--red);color:var(--red)}
 <script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
 </head>
 <body>
+<header class="appbar"><div class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z"/></svg><span>Study Stars</span></div><div class="acct" id="acct"></div></header>
+<nav class="tabbar" id="nav" aria-label="Sections"><button data-v="study" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg><span>Study</span></button><button data-v="progress" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Progress</span></button><button data-v="ranks" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/></svg><span>Ranks</span></button><button data-v="kingdom" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V10l2-1V6h2v2l3-2 3 2V6h2v3l2 1v11"/><path d="M10 21v-5h4v5"/></svg><span>Kingdom</span></button></nav>
+<main class="main">
+<div class="view" data-view="study">
 <section class="band"><div class="wrap">
-  <div class="top"><h1>Study Stars</h1>
-    <div class="hdr"><div class="tabs" id="tabs"><button data-m="timer">Timer</button><button data-m="check">10-min check-in</button></div><div class="acct" id="acct"></div></div></div>
+  <div class="top"><h1>Study</h1><div class="tabs" id="tabs"><button data-m="timer">Timer</button><button data-m="check">10-min check-in</button></div></div>
   <div class="timer">
     <div class="ring" id="ring">
       <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="tr" cx="50" cy="50" r="45"/><circle id="prog" class="pr" cx="50" cy="50" r="45" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0"/></svg>
@@ -199,12 +226,11 @@ button.sure{border-color:var(--red);color:var(--red)}
       </div>
       <div><label for="label">What are you studying? <span class="sub">(optional)</span></label><input id="label" list="labels" maxlength="60" placeholder="e.g. Chemistry revision"><datalist id="labels"></datalist></div>
       <div class="row"><button class="big" id="go">Start</button><button id="reset">Reset</button></div>
-      <div class="banner" id="banner" role="status"></div>
     </div>
   </div>
   <div class="stats" id="stats"></div>
+  
 </div></section>
-
 <section class="band"><div class="wrap">
   <div class="buckets">
     <div class="bk"><svg id="jarG" class="jar" viewBox="0 0 160 170" role="img" aria-label="Gold star bucket"></svg>
@@ -215,28 +241,37 @@ button.sure{border-color:var(--red);color:var(--red)}
         <p class="sub" id="rLast" style="margin:8px 0 0"></p></div></div>
   </div>
 </div></section>
+</div>
 
+<div class="view" data-view="progress" hidden>
 <section class="band"><div class="wrap">
-  <div class="top"><h2>Leaderboard</h2><div class="row" id="lbTabs"><button data-w="all">All time</button><button data-w="week">Last 7 days</button><button data-w="day">Last 24 hours</button></div></div>
-  <p class="sub" style="margin:0">Ranked by stars earned while signed in (1 star = 1 hour). Your level counts all your stars. Click a player to visit their kingdom.</p>
-  <p class="lbn" id="lbNote" hidden></p>
-  <div id="lb"></div>
-</div></section>
-
-<section class="band"><div class="wrap">
-  <div class="top"><h2>Your kingdom</h2><span class="aca" id="aca"></span></div>
-  <p class="sub" style="margin:0">Exchange your study stars for Aca coins at the bank, then open your kingdom to build your village. Higher study levels unlock better buildings and upgrades.</p>
-  <div id="kgHome"></div>
-</div></section>
-
-<section class="band"><div class="wrap">
-  <div class="top"><h2>Hours studied per day</h2><div class="row" id="ranges"></div></div>
+  <div class="top"><h1>Hours studied per day</h1><div class="row" id="ranges"></div></div>
   <p class="sub" style="margin:0">Counted from 12:00 am to 11:59 pm. Only finished sessions and confirmed check-ins count.</p>
   <div class="fig" id="chartbox"><svg id="chart" role="img" aria-label="Hours studied per day"></svg></div>
   <h2 class="mt">Session log</h2>
   <div id="log"></div>
   <p class="note" id="sync">Saved in this browser.</p>
 </div></section>
+</div>
+
+<div class="view" data-view="ranks" hidden>
+<section class="band"><div class="wrap">
+  <div class="top"><h1>Leaderboard</h1><div class="row" id="lbTabs"><button data-w="all">All time</button><button data-w="week">Last 7 days</button><button data-w="day">Last 24 hours</button></div></div>
+  <p class="sub" style="margin:0">Ranked by stars earned while signed in (1 star = 1 hour). Your level counts all your stars. Tap a player to visit their kingdom.</p>
+  <p class="lbn" id="lbNote" hidden></p>
+  <div id="lb"></div>
+</div></section>
+</div>
+
+<div class="view" data-view="kingdom" hidden>
+<section class="band"><div class="wrap">
+  <div class="top"><h1>Your kingdom</h1><span class="aca" id="aca"></span></div>
+  <p class="sub" style="margin:0">Exchange your study stars for Aca coins at the bank, then open your kingdom to build your village. Higher study levels unlock better buildings and upgrades.</p>
+  <div id="kgHome"></div>
+</div></section>
+</div>
+</main>
+<div class="banner" id="banner" role="status"></div>
 
 <div class="ask" id="ask" hidden><div class="card" role="alertdialog" aria-labelledby="askh">
   <h2 id="askh">10 minutes done</h2>
@@ -318,8 +353,8 @@ const goldN=()=>Math.floor(totalMin()/60+1e-9);
 const leftNow=()=>T.run?(T.endAt-Date.now())/1000:T.left;
 function dayMin(d){const a=new Date(d);a.setHours(0,0,0,0);const b=new Date(a);b.setDate(b.getDate()+1);let m=0;
   for(const s of sess()){const st=s.start||s.end-(s.min||0)*6e4,o=Math.min(b.getTime(),s.end)-Math.max(a.getTime(),st);if(o>0)m+=(s.end>st?o/(s.end-st):1)*(+s.min||0)}return m}
-function banner(t,bad){const b=$('#banner');b.textContent=t;b.className='banner'+(bad?' bad':'');void b.offsetWidth;b.classList.add('on')}
-function note(t){$('#sync').textContent=t}
+let bTimer=0;function banner(t,bad){const b=$('#banner');b.textContent=t;b.className='banner'+(bad?' bad':'');void b.offsetWidth;b.classList.add('on');clearTimeout(bTimer);bTimer=setTimeout(()=>b.classList.remove('on'),bad?8000:5000)}
+function note(t){$('#sync').textContent=t;if(/couldn|didn|fail|stopped|wasn|blocked/i.test(t))banner(t,true)}
 const store={push:null,del:null};
 function push(x){try{if(store.push)store.push(x)}catch(e){}}
 
@@ -695,7 +730,7 @@ function renderKHome(){const el=$('#kgHome'),ac=$('#aca');if(!el)return;
 /* full-screen kingdom editor */
 function renderKFS(){if(!kOpen)return;const fs=$('#kfs');if(!kd||!me){closeKingdom();return}
   const aca=+kd.aca||0,st=myStars(),nb=Object.keys(kd.b||{}).length;
-  $('#aca2').innerHTML=coin()+' '+aca+' Aca';$('#kTitle').textContent=me.name+'’s kingdom';
+  $('#aca2').innerHTML=coin()+' '+aca+' Aca';$('#kTitle').textContent=me.name+'’s kingdom';fs.classList.toggle('placing',!!kPlace);
   $('#kview').innerHTML=`<div id="kmap" class="${kPlace?'placing':''}" style="width:${kZoom*100}%">${mapSvg(kd.b,true)}</div>`;
   let side='';const r=kReady();
   if(r)side+=`<button class="kcard tre" id="kBank2" type="button"><span><small class="sub">Bank</small><b>${r}★ ready → ${r*10} Aca</b></span><span class="sub">Open bank ›</span></button>`;
@@ -712,7 +747,8 @@ function renderKFS(){if(!kOpen)return;const fs=$('#kfs');if(!kd||!me){closeKingd
   $('#kpanel').innerHTML=side;drawHover();
 }
 function renderKingdom(){renderKHome();renderKFS();if(!$('#bankM').hidden)renderBank()}
-function openKingdom(){if(!kd)return;kOpen=true;$('#kfs').hidden=false;document.body.style.overflow='hidden';renderKFS()}
+function kCenter(){const v=$('#kview');requestAnimationFrame(()=>{v.scrollLeft=(v.scrollWidth-v.clientWidth)/2;v.scrollTop=(v.scrollHeight-v.clientHeight)/2})}
+function openKingdom(){if(!kd)return;kOpen=true;$('#kfs').hidden=false;document.body.style.overflow='hidden';renderKFS();kCenter()}
 function closeKingdom(){kOpen=false;kPlace=null;kSel=null;$('#kfs').hidden=true;document.body.style.overflow='';try{if(document.fullscreenElement)document.exitFullscreen()}catch(e){}renderKHome()}
 /* bank */
 function renderBank(){const r=kReady(),aca=kd?+kd.aca||0:0;bankN=Math.max(r?1:0,Math.min(bankN,r));
@@ -738,7 +774,7 @@ $('#kfs').addEventListener('pointerleave',()=>{kHover=null;drawHover()});
 $('#kfs').addEventListener('click',async e=>{
   if(e.target.closest('#kBack')){closeKingdom();return}
   if(e.target.closest('#kBankBtn')||e.target.closest('#kBank2')){openBank();return}
-  if(e.target.closest('#kZoomIn')||e.target.closest('#kZoomOut')){kZoom=Math.min(3,Math.max(1,kZoom+(e.target.closest('#kZoomIn')?.5:-.5)));LS.set('ss-kz',kZoom);renderKFS();return}
+  if(e.target.closest('#kZoomIn')||e.target.closest('#kZoomOut')){kZoom=Math.min(3,Math.max(1,kZoom+(e.target.closest('#kZoomIn')?.5:-.5)));LS.set('ss-kz',kZoom);renderKFS();kCenter();return}
   if(e.target.closest('#kFull')){try{if(document.fullscreenElement)await document.exitFullscreen();else await $('#kfs').requestFullscreen()}catch(err){note('Full screen isn’t available here.')}return}
   const buy=e.target.closest('[data-buy]');if(buy){kPlace={type:buy.dataset.buy};kSel=null;renderKFS();return}
   if(e.target.closest('#kCancel')){kPlace=null;renderKFS();return}
@@ -780,6 +816,17 @@ window.SS={store,banner,note,
   setItems(a){items=a;saveI();renderAll()}};
 
 $('#bigp').setAttribute('d',starPath(100,106,94));
+/* ---------- app screens ---------- */
+const VIEWS=['study','progress','ranks','kingdom'];
+function showView(v){if(!VIEWS.includes(v))v='study';
+  for(const el of document.querySelectorAll('.view'))el.hidden=el.dataset.view!==v;
+  for(const b of $('#nav').children)b.toggleAttribute('aria-current',false),b.dataset.v===v&&b.setAttribute('aria-current','page');
+  LS.set('ss-view',v);window.scrollTo(0,0);if(v==='progress')draw()}
+$('#nav').addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(!b)return;if(location.hash!=='#'+b.dataset.v)location.hash=b.dataset.v;else showView(b.dataset.v)});
+window.addEventListener('hashchange',()=>showView(location.hash.slice(1)));
+$('#banner').addEventListener('click',()=>$('#banner').classList.remove('on'));
+if(LS.get('ss-kz',null)===null&&innerWidth<600)kZoom=2;
+showView(location.hash.slice(1)||LS.get('ss-view','study'));
 nUI();tick();renderAll();
 }
 </script>
