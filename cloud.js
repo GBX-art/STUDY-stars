@@ -22,7 +22,7 @@ let db;
 try { db = F.initializeFirestore(app, { localCache: F.persistentLocalCache({ tabManager: F.persistentMultipleTabManager() }) }); }
 catch (e) { db = F.getFirestore(app); }
 
-let unsubs = [], pendingName = '', myBoard = null, bref = null, wref = null, myWallet = null, walletMade = false;
+let unsubs = [], pendingName = '', myBoard = null, bref = null, kref = null, myK = null, kMade = false;
 
 // Shape a session/red star exactly the way the security rules expect.
 function clean(x, src) {
@@ -74,9 +74,13 @@ window.SScloud = {
     if (myBoard) b.update(F.doc(db, 'board', uid), { name, photo: photo.length <= 60000 ? photo : '' });
     return b.commit();
   },
-  // Market: claim a free item (price 0) or buy one. The rules check level and price.
-  addItem: (id, price) => F.updateDoc(wref, { owned: [...myWallet.owned, id], aca: myWallet.aca - price, last: id }),
-  equip: (weapon, armour) => F.updateDoc(wref, { weapon, armour })
+  // Kingdom. The security rules check every price, level and conversion.
+  convert: stars => F.updateDoc(kref, { aca: myK.aca + (stars - myK.conv) * 10, conv: stars }),
+  build: (k, type, price) => F.updateDoc(kref, new F.FieldPath('b', k), [type, 0], 'aca', myK.aca - price, 'op', k),
+  upgrade: (k, price) => F.updateDoc(kref, new F.FieldPath('b', k), [myK.b[k][0], myK.b[k][1] + 1], 'aca', myK.aca - price, 'op', k),
+  move: (a, k) => F.updateDoc(kref, new F.FieldPath('b', a), F.deleteField(), new F.FieldPath('b', k), myK.b[a], 'op', a + '-' + k),
+  demolish: a => F.updateDoc(kref, new F.FieldPath('b', a), F.deleteField(), 'op', 'rm-' + a),
+  visit: async uid => { const s = await F.getDoc(F.doc(db, 'kingdom', uid)); return s.exists() ? s.data() : { aca: 0, conv: 0, b: {} }; }
 };
 
 // Leaderboard entry for this user. `imp` = stars from before joining (count for level only).
@@ -99,9 +103,9 @@ function pruneHours() {
 SS.ready();
 
 A.onAuthStateChanged(auth, async u => {
-  unsubs.forEach(f => f()); unsubs = []; myBoard = null; pruned = false; myWallet = null; walletMade = false;
+  unsubs.forEach(f => f()); unsubs = []; myBoard = null; pruned = false; myK = null; kMade = false;
   if (!u) { SS.signedOut(); return; }
-  bref = F.doc(db, 'board', u.uid); wref = F.doc(db, 'wallet', u.uid);
+  bref = F.doc(db, 'board', u.uid); kref = F.doc(db, 'kingdom', u.uid);
   try {
     const { data, fresh } = await ensureUser(u);
     pendingName = '';
@@ -139,17 +143,17 @@ A.onAuthStateChanged(auth, async u => {
       }
     }, e => SS.note('Sync stopped (' + e.code + '). Reload the app to try again.')));
     unsubs.push(F.onSnapshot(bref, s => { myBoard = s.exists() ? s.data() : null; pruneHours(); }, () => {}));
-    unsubs.push(F.onSnapshot(wref, s => {
+    unsubs.push(F.onSnapshot(kref, s => {
       if (!s.exists()) {
-        if (!walletMade) {
-          walletMade = true;
-          F.setDoc(wref, { aca: 0, owned: [], weapon: '', armour: '', last: '' })
-            .catch(e => { walletMade = false; SS.note('The market couldn’t open (' + (e.code || e.message) + ').'); });
+        if (!kMade) {
+          kMade = true;
+          F.setDoc(kref, { aca: 0, conv: 0, b: {}, op: '' })
+            .catch(e => { kMade = false; SS.note('Your kingdom couldn’t be created (' + (e.code || e.message) + ').'); });
         }
         return;
       }
-      myWallet = s.data(); SS.wallet(myWallet);
-    }, e => SS.note('The market couldn’t load (' + e.code + ').')));
+      myK = s.data(); SS.kingdom(myK);
+    }, e => SS.note('Your kingdom couldn’t load (' + e.code + ').')));
     unsubs.push(F.onSnapshot(F.query(F.collection(db, 'board'), F.limit(500)),
       s => SS.board(s.docs.map(d => Object.assign({ id: d.id }, d.data()))),
       e => SS.note('Leaderboard couldn’t load (' + e.code + ').')));
