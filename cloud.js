@@ -22,7 +22,7 @@ let db;
 try { db = F.initializeFirestore(app, { localCache: F.persistentLocalCache({ tabManager: F.persistentMultipleTabManager() }) }); }
 catch (e) { db = F.getFirestore(app); }
 
-let unsubs = [], pendingName = '', myBoard = null, bref = null;
+let unsubs = [], pendingName = '', myBoard = null, bref = null, wref = null, myWallet = null, walletMade = false;
 
 // Shape a session/red star exactly the way the security rules expect.
 function clean(x, src) {
@@ -73,7 +73,10 @@ window.SScloud = {
     b.set(F.doc(db, 'users', uid), { name, photo }, { merge: true });
     if (myBoard) b.update(F.doc(db, 'board', uid), { name, photo: photo.length <= 60000 ? photo : '' });
     return b.commit();
-  }
+  },
+  // Market: claim a free item (price 0) or buy one. The rules check level and price.
+  addItem: (id, price) => F.updateDoc(wref, { owned: [...myWallet.owned, id], aca: myWallet.aca - price, last: id }),
+  equip: (weapon, armour) => F.updateDoc(wref, { weapon, armour })
 };
 
 // Leaderboard entry for this user. `imp` = stars from before joining (count for level only).
@@ -96,9 +99,9 @@ function pruneHours() {
 SS.ready();
 
 A.onAuthStateChanged(auth, async u => {
-  unsubs.forEach(f => f()); unsubs = []; myBoard = null; pruned = false;
+  unsubs.forEach(f => f()); unsubs = []; myBoard = null; pruned = false; myWallet = null; walletMade = false;
   if (!u) { SS.signedOut(); return; }
-  bref = F.doc(db, 'board', u.uid);
+  bref = F.doc(db, 'board', u.uid); wref = F.doc(db, 'wallet', u.uid);
   try {
     const { data, fresh } = await ensureUser(u);
     pendingName = '';
@@ -136,6 +139,17 @@ A.onAuthStateChanged(auth, async u => {
       }
     }, e => SS.note('Sync stopped (' + e.code + '). Reload the app to try again.')));
     unsubs.push(F.onSnapshot(bref, s => { myBoard = s.exists() ? s.data() : null; pruneHours(); }, () => {}));
+    unsubs.push(F.onSnapshot(wref, s => {
+      if (!s.exists()) {
+        if (!walletMade) {
+          walletMade = true;
+          F.setDoc(wref, { aca: 0, owned: [], weapon: '', armour: '', last: '' })
+            .catch(e => { walletMade = false; SS.note('The market couldn’t open (' + (e.code || e.message) + ').'); });
+        }
+        return;
+      }
+      myWallet = s.data(); SS.wallet(myWallet);
+    }, e => SS.note('The market couldn’t load (' + e.code + ').')));
     unsubs.push(F.onSnapshot(F.query(F.collection(db, 'board'), F.limit(500)),
       s => SS.board(s.docs.map(d => Object.assign({ id: d.id }, d.data()))),
       e => SS.note('Leaderboard couldn’t load (' + e.code + ').')));

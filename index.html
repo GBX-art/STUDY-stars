@@ -134,6 +134,20 @@ td .del{min-height:36px;padding:0 12px;font-size:14px}td .del.sure{color:var(--r
 .lb .sc{text-align:right;white-space:nowrap}.lb .sc b{display:block;font:600 22px/1.1 Outfit,sans-serif;font-variant-numeric:tabular-nums}.lb .sc small{color:var(--soft);font-size:13px}
 .lb .gap{border:0;padding:0 14px;color:var(--soft);display:block}
 .lbn{margin:12px 0 0;padding:10px 14px;border-radius:12px;background:var(--vio2);font-size:14px}.lbn.bad{background:var(--red2);color:var(--red)}
+.aca{display:inline-flex;align-items:center;gap:8px;font:600 20px Outfit,sans-serif;padding:6px 14px;border-radius:24px;background:var(--gold2)}.aca svg{width:22px;height:22px}
+.load{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}
+.slot{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:18px;padding:12px 16px;background:var(--panel)}
+.slot .gi{width:56px;height:56px;flex:none}.slot b{display:block}.slot small{color:var(--soft);font-size:13px}
+.pow b{font:600 34px/1 Outfit,sans-serif}
+.mtabs{margin:18px 0 12px}
+.gear{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,160px),1fr));gap:12px}
+.gc{border:1px solid var(--line);border-radius:18px;padding:14px;display:grid;gap:8px;align-content:start;position:relative}
+.gc.lk{opacity:.55}.gc.eq{border-color:var(--gold);background:var(--gold2)}
+.gc .gi{width:64px;height:64px}.gc b{line-height:1.2}.gc small{color:var(--soft);font-size:13px}
+.gc .tg{position:absolute;top:12px;right:12px;font-size:12px;padding:2px 8px;border-radius:12px;background:var(--vio2)}
+.gc button{width:100%;min-height:40px}.gc button.sure{border-color:var(--gold);background:var(--gold2)}
+.gi .body{stroke:rgba(0,0,0,.35);stroke-width:2}
+@media(max-width:760px){.load{grid-template-columns:minmax(0,1fr)}}
 .lock{font-size:13px;color:var(--soft);white-space:nowrap}
 @media(max-width:760px){.timer,.buckets{grid-template-columns:minmax(0,1fr)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:6.5em;margin-inline-start:-7em;color:var(--soft)}.stack td:empty{display:none}}
@@ -183,6 +197,12 @@ td .del{min-height:36px;padding:0 12px;font-size:14px}td .del.sure{color:var(--r
   <p class="sub" style="margin:0">Ranked by stars earned while signed in (1 star = 1 hour). Your level counts all your stars.</p>
   <p class="lbn" id="lbNote" hidden></p>
   <div id="lb"></div>
+</div></section>
+
+<section class="band"><div class="wrap">
+  <div class="top"><h2>Market</h2><span class="aca" id="aca"></span></div>
+  <p class="sub" style="margin:0">Your level unlocks gear. Every level gives you a free weapon and armour. The stronger ones cost Aca coins, which you win in study-room battles (coming in the next update).</p>
+  <div id="mk"></div>
 </div></section>
 
 <section class="band"><div class="wrap">
@@ -385,7 +405,7 @@ function renderBuckets(){
   $('#jarG').innerHTML=jarSvg(g,'sg');$('#jarR').innerHTML=jarSvg(r,'sr');$('#gN').textContent=g;$('#rN').textContent=r;
   $('#gBar').style.width=(rem/60*100)+'%';$('#gNext').textContent=`${Math.round(rem)} of 60 min to the next gold star`;
   const lr=reds().sort((a,b)=>b.end-a.end)[0];
-  const L=levelOf(g);$('#lvl').innerHTML=`Level ${L.i+1}: <strong>${esc(L.name)}</strong>`+(L.next?` <span class="sub">· ${L.next[0]-g} more star${L.next[0]-g===1?'':'s'} to ${esc(L.next[1])}</span>`:' <span class="sub">· top level!</span>');
+  const ls=typeof myStars==='function'?myStars():g,L=levelOf(ls);$('#lvl').innerHTML=`Level ${L.i+1}: <strong>${esc(L.name)}</strong>`+(L.next?` <span class="sub">· ${L.next[0]-ls} more star${L.next[0]-ls===1?'':'s'} to ${esc(L.next[1])}</span>`:' <span class="sub">· top level!</span>');
   if(typeof renderAcct==='function')renderAcct();
   $('#rLast').textContent=lr?'Last one: '+new Date(lr.end).toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})+' at '+hm(new Date(lr.end)):'None yet. Keep it that way.';
 }
@@ -421,7 +441,7 @@ function renderLog(){
   $('#log').innerHTML=`<table class="stack"><thead><tr><th>Date</th><th>Time</th><th>Length</th><th>Type</th><th>Subject</th><th></th></tr></thead><tbody>${rows.map(s=>{const e=new Date(s.end),r=s.kind==='r';
     return `<tr><td>${esc(e.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short',year:'numeric'}))}</td><td class="nw">${r?hm(e):hm(new Date(s.start||s.end))+'–'+hm(e)}</td><td class="nw">${r?'—':s.min+' min'}</td><td>${r?'<span class="tag r">Red star</span>':`<span class="tag">${s.mode==='check'?'Check-in':'Timer'}</span>`}</td><td>${esc(s.label)||'<span class="sub">—</span>'}</td><td>${me&&s.src==='online'&&s.kind!=='r'?'<span class="lock">On leaderboard</span>':`<button class="del" data-id="${esc(s.id)}">Remove</button>`}</td></tr>`}).join('')}</tbody></table>`+(items.length>60?`<p class="note">Showing the latest 60 of ${items.length}.</p>`:'');
 }
-function renderAll(){renderStats();renderBuckets();draw();renderLog();if(typeof renderLb==='function')renderLb()}
+function renderAll(){renderStats();renderBuckets();draw();renderLog();if(typeof renderLb==='function'){renderLb();renderMarket()}}
 
 /* ---------- events ---------- */
 $('#tabs').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(!b||b.disabled)return;mode=b.dataset.m;LS.set('ss-mode',mode);$('#banner').classList.remove('on');render()});
@@ -469,7 +489,7 @@ const avatar=(p,n,c)=>p?`<img class="${c}" src="${esc(p)}" alt="" referrerpolicy
 function renderAcct(){const a=$('#acct');
   if(!cloudOK){a.innerHTML='';return}
   if(!me){a.innerHTML='<button id="signin" type="button">Sign in</button>';return}
-  a.innerHTML=`<button class="me" id="meBtn" type="button" aria-label="Your profile">${avatar(me.photo,me.name,'av')}<span><b>${esc(me.name)}</b><small>${esc(levelOf(hold.g??goldN()).name)}</small></span></button>`}
+  a.innerHTML=`<button class="me" id="meBtn" type="button" aria-label="Your profile">${avatar(me.photo,me.name,'av')}<span><b>${esc(me.name)}</b><small>${esc(levelOf(myStars()).name)}</small></span></button>`}
 const openM=s=>{$(s).hidden=false;const f=$(s).querySelector('input:not(.sr),button.gbtn');if(f)f.focus()},closeM=s=>{$(s).hidden=true};
 document.addEventListener('click',e=>{const c=e.target.closest('[data-close]');if(c)closeM(c.dataset.close);
   if(e.target.id==='auth'||e.target.id==='prof')closeM('#'+e.target.id)});
@@ -493,7 +513,7 @@ $('#authForm').addEventListener('submit',async e=>{e.preventDefault();const em=$
 $('#forgot').addEventListener('click',async()=>{const em=$('#em').value.trim();if(!em){$('#authErr').textContent='Type your email above first, then click “Forgot password?”.';return}
   try{await SScloud.reset(em);$('#authErr').textContent='Password reset email sent — check your inbox (and spam).'}catch(e){aErr(e)}});
 function openProfile(){newPhoto=me.photo||'';$('#pName').value=me.name;$('#pPic').innerHTML=avatar(newPhoto,me.name,'avL');$('#pErr').textContent='';
-  const g=goldN(),L=levelOf(g);$('#pInfo').textContent=`${me.email?me.email+' · ':''}${g} stars · Level ${L.i+1}: ${L.name}`;openM('#prof')}
+  const g=myStars(),L=levelOf(g);$('#pInfo').textContent=`${me.email?me.email+' · ':''}${g} stars · Level ${L.i+1}: ${L.name}`;openM('#prof')}
 function shrink(f){return new Promise((res,rej)=>{const u=URL.createObjectURL(f),im=new Image();
   im.onload=()=>{const s=160,c=document.createElement('canvas'),k=Math.min(im.width,im.height);c.width=c.height=s;
     c.getContext('2d').drawImage(im,(im.width-k)/2,(im.height-k)/2,k,k,0,0,s,s);URL.revokeObjectURL(u);res(c.toDataURL('image/jpeg',.82))};
@@ -524,15 +544,67 @@ function renderLb(){const el=$('#lb');
 }
 $('#lbTabs').addEventListener('click',e=>{const b=e.target.closest('[data-w]');if(!b)return;lbWin=b.dataset.w;LS.set('ss-lbw',lbWin);renderLb()});
 $('#lb').addEventListener('click',e=>{if(e.target.closest('#lbSign')){setMode(false);openM('#auth')}});
+/* ---------- market ---------- */
+const GEAR=[{"id": "w1f", "t": "w", "lv": 0, "need": 0, "p": 0, "n": "Pencil Blaster", "dmg": 10, "rate": 1.5}, {"id": "a1f", "t": "a", "lv": 0, "need": 0, "p": 0, "n": "Comfy Hoodie", "hp": 100}, {"id": "w1p", "t": "w", "lv": 0, "need": 0, "p": 5, "n": "Eraser Launcher", "dmg": 14, "rate": 1.8}, {"id": "a1p", "t": "a", "lv": 0, "need": 0, "p": 5, "n": "Pillow Shield", "hp": 115}, {"id": "w2f", "t": "w", "lv": 1, "need": 5, "p": 0, "n": "Highlighter Ray", "dmg": 16, "rate": 1.6}, {"id": "a2f", "t": "a", "lv": 1, "need": 5, "p": 0, "n": "Backpack Plate", "hp": 125}, {"id": "w2p", "t": "w", "lv": 1, "need": 5, "p": 8, "n": "Sticky-Note Shuriken", "dmg": 20, "rate": 1.9}, {"id": "a2p", "t": "a", "lv": 1, "need": 5, "p": 8, "n": "Ring-Binder Vest", "hp": 140}, {"id": "w3f", "t": "w", "lv": 2, "need": 15, "p": 0, "n": "Bookmark Bow", "dmg": 22, "rate": 1.7}, {"id": "a3f", "t": "a", "lv": 2, "need": 15, "p": 0, "n": "Library Cardigan", "hp": 150}, {"id": "w3p", "t": "w", "lv": 2, "need": 15, "p": 12, "n": "Paperback Cannon", "dmg": 26, "rate": 2.0}, {"id": "a3p", "t": "a", "lv": 2, "need": 15, "p": 12, "n": "Hardcover Shield", "hp": 165}, {"id": "w4f", "t": "w", "lv": 3, "need": 30, "p": 0, "n": "Coffee Splasher", "dmg": 28, "rate": 1.8}, {"id": "a4f", "t": "a", "lv": 3, "need": 30, "p": 0, "n": "Lab Coat", "hp": 175}, {"id": "w4p", "t": "w", "lv": 3, "need": 30, "p": 15, "n": "Espresso Repeater", "dmg": 32, "rate": 2.1}, {"id": "a4p", "t": "a", "lv": 3, "need": 30, "p": 15, "n": "Goggles & Gloves", "hp": 190}, {"id": "w5f", "t": "w", "lv": 4, "need": 60, "p": 0, "n": "Stapler Gun", "dmg": 34, "rate": 1.9}, {"id": "a5f", "t": "a", "lv": 4, "need": 60, "p": 0, "n": "Exam Hall Vest", "hp": 200}, {"id": "w5p", "t": "w", "lv": 4, "need": 60, "p": 20, "n": "Deadline Crossbow", "dmg": 38, "rate": 2.2}, {"id": "a5p", "t": "a", "lv": 4, "need": 60, "p": 20, "n": "Bubble-Wrap Armour", "hp": 215}, {"id": "w6f", "t": "w", "lv": 5, "need": 100, "p": 0, "n": "Silence Beam", "dmg": 40, "rate": 2.0}, {"id": "a6f", "t": "a", "lv": 5, "need": 100, "p": 0, "n": "Bookshelf Fortress", "hp": 225}, {"id": "w6p", "t": "w", "lv": 5, "need": 100, "p": 25, "n": "Encyclopedia Mortar", "dmg": 44, "rate": 2.3}, {"id": "a6p", "t": "a", "lv": 5, "need": 100, "p": 25, "n": "Quiet Zone Field", "hp": 240}, {"id": "w7f", "t": "w", "lv": 6, "need": 175, "p": 0, "n": "Calculator Railgun", "dmg": 46, "rate": 2.1}, {"id": "a7f", "t": "a", "lv": 6, "need": 175, "p": 0, "n": "Formula Mail", "hp": 250}, {"id": "w7p", "t": "w", "lv": 6, "need": 175, "p": 30, "n": "Periodic Table Plasma", "dmg": 50, "rate": 2.4}, {"id": "a7p", "t": "a", "lv": 6, "need": 175, "p": 30, "n": "Graphene Plate", "hp": 265}, {"id": "w8f", "t": "w", "lv": 7, "need": 275, "p": 0, "n": "All-Nighter Laser", "dmg": 52, "rate": 2.2}, {"id": "a8f", "t": "a", "lv": 7, "need": 275, "p": 0, "n": "Caffeine Exoskeleton", "hp": 275}, {"id": "w8p", "t": "w", "lv": 7, "need": 275, "p": 40, "n": "Red-Eye Minigun", "dmg": 56, "rate": 2.5}, {"id": "a8p", "t": "a", "lv": 7, "need": 275, "p": 40, "n": "Insomnia Aura", "hp": 290}, {"id": "w9f", "t": "w", "lv": 8, "need": 400, "p": 0, "n": "Thesis Launcher", "dmg": 58, "rate": 2.3}, {"id": "a9f", "t": "a", "lv": 8, "need": 400, "p": 0, "n": "Dissertation Bulwark", "hp": 300}, {"id": "w9p", "t": "w", "lv": 8, "need": 400, "p": 50, "n": "Citation Storm", "dmg": 62, "rate": 2.6}, {"id": "a9p", "t": "a", "lv": 8, "need": 400, "p": 50, "n": "Peer-Review Shield", "hp": 315}, {"id": "w10f", "t": "w", "lv": 9, "need": 600, "p": 0, "n": "Chalk Annihilator", "dmg": 64, "rate": 2.4}, {"id": "a10f", "t": "a", "lv": 9, "need": 600, "p": 0, "n": "Gown of Madness", "hp": 325}, {"id": "w10p", "t": "w", "lv": 9, "need": 600, "p": 75, "n": "Mad Professor's Tesla Coil", "dmg": 68, "rate": 2.7}, {"id": "a10p", "t": "a", "lv": 9, "need": 600, "p": 75, "n": "Tenure Titan Suit", "hp": 340}];
+const ITEMS={};GEAR.forEach(g=>{g.pow=g.t==='w'?Math.round(g.dmg*g.rate):Math.round(g.hp/5);ITEMS[g.id]=g});
+const TIER=['#8a8f98','#3a9e9a','#3d7fd6','#5b5bd6','#8b4fd1','#c246a8','#d63c3c','#e07a1f','#e0a400','#f2c230'];
+let wallet=null,mkTab=LS.get('ss-mkt','w'),claiming=false;
+function myStars(){const b=me&&lbData&&lbData.find(r=>r.id===me.uid);return b?Math.floor(((+b.imp||0)+(+b.min||0))/60):goldN()}
+const coin=()=>'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#e0a400" stroke="#9b6a00" stroke-width="1.5"/><circle cx="12" cy="12" r="6.5" fill="none" stroke="#fff3cf" stroke-width="1.5"/><text x="12" y="16" text-anchor="middle" font-size="9" font-weight="700" fill="#5a3d00" font-family="Inter,sans-serif">A</text></svg>';
+function gIcon(g){const c=TIER[g.lv],pr=g.p>0;
+  const badge=pr?`<path d="${starPath(52,12,8)}" fill="#ffd447" stroke="#9b6a00" stroke-width="1"/>`:'';
+  if(g.t==='w')return `<svg class="gi" viewBox="0 0 64 64" aria-hidden="true"><rect class="body" x="8" y="22" width="34" height="14" rx="4" fill="${c}"/><rect class="body" x="40" y="25" width="18" height="7" rx="2" fill="${c}"/><rect class="body" x="14" y="34" width="9" height="16" rx="3" fill="${c}"/><rect x="12" y="25" width="20" height="3" rx="1.5" fill="#fff" opacity=".45"/>${badge}</svg>`;
+  return `<svg class="gi" viewBox="0 0 64 64" aria-hidden="true"><path class="body" d="M32 6 L54 14 V30 C54 44 44 54 32 58 C20 54 10 44 10 30 V14 Z" fill="${c}"/><path d="M32 13 L47 19 V30 C47 40 40 47 32 50 Z" fill="#fff" opacity=".3"/>${badge}</svg>`}
+const gStat=g=>g.t==='w'?`Damage ${g.dmg} · ${g.rate} shots/s`:`Health +${g.hp}`;
+function renderMarket(){const el=$('#mk'),ac=$('#aca');
+  if(!cloudOK){el.innerHTML='<p class="sub" style="margin-top:14px">The market needs an internet connection.</p>';ac.innerHTML='';return}
+  if(!me){el.innerHTML='<div class="row" style="margin-top:14px"><span class="sub">Sign in to unlock gear and use the market.</span><button id="mkSign" type="button">Sign in</button></div>';ac.innerHTML='';return}
+  if(!wallet){el.innerHTML='<p class="sub" style="margin-top:14px">Opening the market…</p>';ac.innerHTML='';return}
+  ac.innerHTML=coin()+' '+(+wallet.aca||0)+' Aca';
+  const st=myStars(),W=ITEMS[wallet.weapon],A=ITEMS[wallet.armour],pw=(W?W.pow:0)+(A?A.pow:0);
+  const slot=(g,label)=>`<div class="slot">${g?gIcon(g):'<span class="gi"></span>'}<span><small>${label}</small><b>${g?esc(g.n):'None'}</b><small>${g?gStat(g):''}</small></span></div>`;
+  const list=GEAR.filter(g=>g.t===mkTab).sort((a,b)=>a.lv-b.lv||a.p-b.p);
+  const card=g=>{const own=wallet.owned.includes(g.id),eq=wallet.weapon===g.id||wallet.armour===g.id,lk=st<g.need;let btn;
+    if(eq)btn='<button disabled>Equipped</button>';
+    else if(own)btn=`<button data-eq="${g.id}">Equip</button>`;
+    else if(lk)btn=`<button disabled>Unlocks at ${g.need}★</button>`;
+    else if(!g.p)btn='<button disabled>Unlocking…</button>';
+    else btn=(+wallet.aca||0)>=g.p?`<button data-buy="${g.id}">Buy · ${g.p} Aca</button>`:`<button disabled title="Win battles to earn Aca">${g.p} Aca · need ${g.p-(+wallet.aca||0)} more</button>`;
+    return `<div class="gc${lk&&!own?' lk':''}${eq?' eq':''}">${gIcon(g)}<span class="tg">${g.p?'Premium':'Free'}</span><b>${esc(g.n)}</b><small>${esc(LEVELS[g.lv][1])} · Power ${g.pow}</small><small>${gStat(g)}</small>${btn}</div>`};
+  el.innerHTML=`<div class="load">${slot(W,'Weapon')}${slot(A,'Armour')}<div class="slot pow"><span><small>Battle power</small><b>${pw}</b><small>Level ${levelOf(st).i+1}: ${esc(levelOf(st).name)}</small></span></div></div>
+    <div class="row mtabs" id="mtabs"><button data-t="w" aria-pressed="${mkTab==='w'}">Weapons</button><button data-t="a" aria-pressed="${mkTab==='a'}">Armour</button></div>
+    <div class="gear">${list.map(card).join('')}</div>`;
+}
+async function maybeClaim(){
+  if(claiming||!wallet||!me||!window.SScloud||!lbData)return;
+  const st=myStars(),it=GEAR.find(g=>!g.p&&st>=g.need&&!wallet.owned.includes(g.id));
+  if(it){claiming=true;
+    try{await SScloud.addItem(it.id,0);banner('New gear unlocked: '+it.n+'!');
+      const cur=ITEMS[it.t==='w'?wallet.weapon:wallet.armour];
+      if(!cur||it.pow>cur.pow)await SScloud.equip(it.t==='w'?it.id:wallet.weapon,it.t==='a'?it.id:wallet.armour);
+    }catch(e){note('Couldn’t unlock '+it.n+' ('+(e.code||e.message)+').')}
+    claiming=false;setTimeout(maybeClaim,300);return}
+}
+$('#mk').addEventListener('click',async e=>{
+  if(e.target.closest('#mkSign')){setMode(false);openM('#auth');return}
+  const t=e.target.closest('[data-t]');if(t){mkTab=t.dataset.t;LS.set('ss-mkt',mkTab);renderMarket();return}
+  const q=e.target.closest('[data-eq]');
+  if(q){const g=ITEMS[q.dataset.eq];q.disabled=true;try{await SScloud.equip(g.t==='w'?g.id:wallet.weapon,g.t==='a'?g.id:wallet.armour)}catch(err){note('Couldn’t equip ('+(err.code||err.message)+').')}return}
+  const b=e.target.closest('[data-buy]');
+  if(b){const g=ITEMS[b.dataset.buy];
+    if(!b.classList.contains('sure')){b.classList.add('sure');b.textContent=`Confirm: ${g.p} Aca?`;setTimeout(()=>{if(b.isConnected){b.classList.remove('sure');b.textContent=`Buy · ${g.p} Aca`}},3000);return}
+    b.disabled=true;try{await SScloud.addItem(g.id,g.p);banner('You bought '+g.n+'!')}catch(err){note('Purchase failed ('+(err.code||err.message)+').')}}
+});
 window.SS={store,banner,note,
-  board(list){lbData=list;renderLb()},
+  wallet(w){wallet=w;renderMarket();maybeClaim()},
+  board(list){lbData=list;renderLb();renderBuckets();renderMarket();maybeClaim()},
   lb(t,ok){const n=$('#lbNote');n.hidden=false;n.textContent=t;n.className='lbn'+(ok?'':' bad')},
   offline:()=>LS.get('ss-stars',[]).filter(s=>s&&s.id&&s.end),
   clearOffline(){LS.set('ss-stars',[])},
   ready(){cloudOK=true;renderAcct()},
   failed(){cloudOK=false;renderAcct();note('Online features couldn’t load, so you’re offline. Stars are saved on this laptop.')},
   signedIn(u){me=u;key='ss-acct-'+u.uid;items=LS.get(key,[]);renderAll();note('Signed in as '+u.name+'. Your stars sync to your account.')},
-  signedOut(){me=null;lbData=null;$('#lbNote').hidden=true;store.push=store.del=null;key='ss-stars';items=LS.get(key,[]).filter(s=>s&&s.id&&s.end);renderAll();note('Not signed in. Stars are saved on this laptop only — sign in to keep them in your account.')},
+  signedOut(){me=null;lbData=null;wallet=null;$('#lbNote').hidden=true;store.push=store.del=null;key='ss-stars';items=LS.get(key,[]).filter(s=>s&&s.id&&s.end);renderAll();note('Not signed in. Stars are saved on this laptop only — sign in to keep them in your account.')},
   setItems(a){items=a;saveI();renderAll()}};
 
 $('#bigp').setAttribute('d',starPath(100,106,94));
